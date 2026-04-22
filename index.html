@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Қаржылық сауаттылық — Мастер-класс</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red:    #dc2626;
+    --purple: #7c3aed;
+    --green:  #059669;
+    --gold:   #d97706;
+    --blue:   #1d4ed8;
+    --bg:     #f8fafc;
+    --card:   #ffffff;
+    --text:   #1e293b;
+    --muted:  #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
+    color: #fff;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .site-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.02em; }
+  .site-header p  { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+
+  /* ── Tabs ── */
+  .tabs-nav {
+    display: flex;
+    background: #1e3a5f;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs-nav::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: 12px 18px;
+    color: rgba(255,255,255,0.65);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: #fff; }
+  .tab-btn.active { color: #fff; border-bottom-color: #fbbf24; }
+  .tab-btn.t1.active { border-bottom-color: var(--red); }
+  .tab-btn.t2.active { border-bottom-color: #a78bfa; }
+  .tab-btn.t3.active { border-bottom-color: #34d399; }
+  .tab-btn.t4.active { border-bottom-color: var(--gold); }
+  .tab-btn.ts.active { border-bottom-color: #fff; }
+
+  .tab-panel { display: none; padding: 20px 16px 40px; max-width: 800px; margin: 0 auto; }
+  .tab-panel.active { display: block; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Character card ── */
+  .character-card {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .character-avatar {
+    font-size: 2.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .character-card h2  { font-size: 1.05rem; font-weight: 700; color: #1e3a5f; }
+  .character-card p   { font-size: 0.88rem; color: #374151; margin-top: 4px; line-height: 1.5; }
+  .character-card .task-label {
+    display: inline-block;
+    margin-top: 8px;
+    background: #1d4ed8;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── Tables ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .data-table th {
+    background: #f1f5f9;
+    padding: 9px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table .num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .data-table .negative { color: var(--red); }
+  .data-table .positive { color: var(--green); }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary   { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #1e40af; }
+  .btn-green     { background: var(--green); color: #fff; }
+  .btn-green:hover { background: #047857; }
+  .btn-purple    { background: var(--purple); color: #fff; }
+  .btn-purple:hover { background: #6d28d9; }
+  .btn-gold      { background: var(--gold); color: #fff; }
+  .btn-gold:hover { background: #b45309; }
+  .btn:disabled  { opacity: 0.4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+  /* ── Result box ── */
+  .result-box {
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-box.bad     { background: #fef2f2; border: 2px solid #fecaca; }
+  .result-box.ok      { background: #f0fdf4; border: 2px solid #bbf7d0; }
+  .result-box.mixed   { background: #f5f3ff; border: 2px solid #ddd6fe; }
+  .result-box.great   { background: #fffbeb; border: 2px solid #fde68a; }
+  .result-headline {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .result-box.bad   .result-headline { color: var(--red); }
+  .result-box.ok    .result-headline { color: var(--green); }
+  .result-box.mixed .result-headline { color: var(--purple); }
+  .result-box.great .result-headline { color: var(--gold); }
+  .result-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; }
+  .result-message {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    padding: 12px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+
+  /* ── Year-by-year table (results) ── */
+  .year-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.88rem; }
+  .year-table th {
+    background: #f8fafc;
+    padding: 8px 10px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .year-table th:first-child { text-align: left; }
+  .year-table td { padding: 8px 10px; border-top: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; }
+  .year-table td:first-child { text-align: left; font-weight: 600; }
+  .year-table .neg { color: var(--red); font-weight: 700; }
+  .year-table .pos { color: var(--green); font-weight: 700; }
+
+  /* ── Bar chart (CSS) ── */
+  .bar-chart { margin-top: 16px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-label { width: 130px; font-size: 0.82rem; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 24px; background: #f1f5f9; border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 0.78rem; font-weight: 700; color: #fff; transition: width 0.8s ease; min-width: 0; }
+  .bar-value { font-size: 0.82rem; font-weight: 700; width: 110px; text-align: right; flex-shrink: 0; }
+
+  /* ── News card (Group 2) ── */
+  .news-deck { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .news-card {
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: none;
+    border-left: 4px solid;
+  }
+  .news-card.show { display: block; }
+  .news-card.up   { background: #f0fdf4; border-color: var(--green); }
+  .news-card.down { background: #fef2f2; border-color: var(--red); }
+  .news-card .news-year  { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+  .news-card .news-title { font-size: 0.9rem; font-weight: 600; margin-top: 2px; }
+  .news-card .news-effect{ font-size: 0.85rem; font-weight: 700; margin-top: 4px; }
+  .news-card.up   .news-effect { color: var(--green); }
+  .news-card.down .news-effect { color: var(--red); }
+
+  /* ── Portfolio display ── */
+  .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .portfolio-item {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .portfolio-item .company { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+  .portfolio-item .amount  { font-size: 1.1rem; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .portfolio-item .change  { font-size: 0.8rem; font-weight: 600; margin-top: 2px; }
+  .portfolio-item.up   { border-color: #bbf7d0; background: #f0fdf4; }
+  .portfolio-item.down { border-color: #fecaca; background: #fef2f2; }
+
+  /* ── Deposit comparison (Group 3) ── */
+  .deposit-grid { display: grid; gap: 12px; margin-top: 12px; }
+  .deposit-card {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    background: #f8fafc;
+    transition: all 0.3s;
+  }
+  .deposit-card.winner { border-color: var(--green); background: #f0fdf4; }
+  .deposit-card.loser  { border-color: #fecaca; background: #fef2f2; }
+  .deposit-card .bank  { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+  .deposit-card .rate  { font-size: 1.3rem; font-weight: 800; margin-top: 2px; }
+  .deposit-card.winner .rate { color: var(--green); }
+  .deposit-card.loser  .rate { color: var(--red); }
+  .deposit-card .amounts { margin-top: 8px; font-size: 0.85rem; display: none; }
+  .deposit-card.calculated .amounts { display: block; }
+  .deposit-card .badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: none;
+  }
+  .deposit-card.winner .badge { background: var(--green); color: #fff; display: inline-block; }
+  .deposit-card.loser  .badge { background: var(--red);   color: #fff; display: inline-block; }
+
+  /* ── 50/30/20 visual (Group 4) ── */
+  .budget-bar { display: flex; height: 32px; border-radius: 8px; overflow: hidden; margin: 12px 0; font-size: 0.78rem; font-weight: 700; color: #fff; }
+  .budget-bar .seg { display: flex; align-items: center; justify-content: center; }
+
+  /* ── Timeline (Group 4 debt) ── */
+  .timeline { margin-top: 12px; }
+  .timeline-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.87rem; }
+  .timeline-row:last-child { border-bottom: none; }
+  .timeline-year { font-weight: 700; width: 50px; flex-shrink: 0; }
+  .timeline-debt { color: var(--red); font-weight: 700; width: 130px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .timeline-save { color: var(--green); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .timeline-note { font-size: 0.78rem; color: var(--muted); flex: 1; }
+
+  /* ── Summary (last tab) ── */
+  .summary-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: stretch; }
+  .summary-card {
+    flex: 1;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    border: 2px solid;
+  }
+  .summary-card.c1 { border-color: var(--red);    background: #fef2f2; }
+  .summary-card.c2 { border-color: #a78bfa;       background: #f5f3ff; }
+  .summary-card.c3 { border-color: #34d399;       background: #f0fdf4; }
+  .summary-card.c4 { border-color: var(--gold);   background: #fffbeb; }
+  .summary-card .s-top   { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .summary-card .s-name  { font-size: 0.82rem; font-weight: 700; margin-top: 4px; }
+  .summary-card .s-amount{ font-size: 1.2rem; font-weight: 800; margin-top: 6px; line-height: 1.1; }
+  .summary-card.c1 .s-amount { color: var(--red); }
+  .summary-card.c2 .s-amount { color: var(--purple); }
+  .summary-card.c3 .s-amount { color: var(--green); }
+  .summary-card.c4 .s-amount { color: var(--gold); }
+  .summary-card .s-emoji { font-size: 1.5rem; margin-top: 6px; }
+
+  .lesson-box {
+    background: #1e3a5f;
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+    text-align: center;
+  }
+  .lesson-box h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #fbbf24; }
+  .lesson-box p  { font-size: 0.9rem; line-height: 1.6; opacity: 0.92; }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    .portfolio-grid { grid-template-columns: 1fr 1fr; }
+    .summary-row { flex-direction: column; }
+    .summary-card .s-amount { font-size: 1rem; }
+    .bar-label { width: 100px; }
+  }
+
+  /* ── Group 1: Brand selection ── */
+  .g1-brand-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .g1-brand-card {
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .g1-brand-card:hover  { border-color: var(--red); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(220,38,38,.15); }
+  .g1-brand-card.selected { border-color: var(--red); background: #fef2f2; }
+  .g1-brand-card.dimmed   { opacity: .35; cursor: default; pointer-events: none; }
+  .g1-brand-emoji  { font-size: 2rem; }
+  .g1-brand-name   { font-size: 1rem; font-weight: 800; margin-top: 4px; }
+  .g1-brand-model  { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .g1-brand-price  { font-size: 1.1rem; font-weight: 800; color: var(--red); margin-top: 8px; }
+  .g1-brand-remain { font-size: 0.8rem; font-weight: 600; margin-top: 3px; }
+  .g1-brand-remain.pos { color: var(--green); }
+  .g1-brand-desc   { font-size: 0.72rem; color: var(--muted); margin-top: 5px; }
+
+  /* ── Group 1: Guide & year cards ── */
+  .g1-guide-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .g1-guide-block {
+    background: #fef2f2;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .g1-guide-label {
+    font-weight: 700;
+    font-size: 0.84rem;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .g1-situation {
+    background: #fff7ed;
+    border-left: 3px solid #f97316;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .g1-year-card { margin-bottom: 0; }
+
+  /* ── Group 2: Company selection ── */
+  .g2-category-section {
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .g2-category-header {
+    font-size: 0.9rem; font-weight: 800;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .g2-cat-amount { font-size: 0.74rem; color: var(--muted); font-weight: 400; margin-left: auto; }
+  .g2-company-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .g2-company-card {
+    border: 2px solid var(--border); border-radius: 10px;
+    padding: 12px; cursor: pointer; transition: all 0.2s; user-select: none;
+  }
+  .g2-company-card:hover  { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+  .g2-company-card.selected { border-width: 2px; background: #f0fdf4; }
+  .g2-company-card.dimmed   { opacity: .35; cursor: default; pointer-events: none; }
+  .g2-company-name   { font-weight: 800; font-size: 0.92rem; }
+  .g2-company-ticker { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+  .g2-company-desc   { font-size: 0.75rem; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+
+  /* ── Group 2: Year news cards ── */
+  .g2-news-list { display: flex; flex-direction: column; gap: 10px; }
+  .g2-news-item {
+    background: #fafafa; border-radius: 8px;
+    border: 1px solid var(--border); padding: 10px 14px;
+  }
+  .g2-news-company { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+  .g2-ticker { font-size: 0.72rem; color: var(--muted); }
+  .g2-pct-badge { font-size: 0.8rem; font-weight: 800; padding: 2px 8px; border-radius: 12px; margin-left: 2px; }
+  .g2-pct-up   { background: #dcfce7; color: #16a34a; }
+  .g2-pct-down { background: #fee2e2; color: #dc2626; }
+  .g2-news-text { font-size: 0.83rem; font-style: italic; color: var(--text); margin-bottom: 6px; }
+  .g2-calc-hint { display: flex; align-items: center; gap: 10px; }
+  .g2-mult-badge { font-weight: 800; font-size: 0.85rem; }
+  .g2-formula    { color: var(--muted); font-size: 0.8rem; }
+
+
+  /* ── Step box (Group 1 instructions) ── */
+  .step-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: #fef2f2;
+    border-left: 3px solid var(--red);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+  .step-num {
+    background: var(--red);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .step-text {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  /* ── Utility ── */
+  .mt8  { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .mt16 { margin-top: 16px; }
+  .section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  .tag-red    { background: #fee2e2; color: var(--red); }
+  .tag-green  { background: #d1fae5; color: #065f46; }
+  .tag-purple { background: #ede9fe; color: #5b21b6; }
+  .tag-gold   { background: #fef3c7; color: #92400e; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>💰 Қаржылық сауаттылық</h1>
+  <p>Мастер-класс · 4 топ · 4 жыл · 1 000 000 теңге</p>
+</div>
+
+<nav class="tabs-nav" role="tablist">
+  <button class="tab-btn t1 active" onclick="showTab('t1',this)">🛍️ 1-топ: Тұтынушылар</button>
+  <button class="tab-btn t2"        onclick="showTab('t2',this)">🏦 2-топ: Депозит</button>
+  <button class="tab-btn t3"        onclick="showTab('t3',this)">📈 3-топ: Инвесторлар</button>
+  <button class="tab-btn t4"        onclick="showTab('t4',this)">🎯 4-топ: Сауатты азамат</button>
+  <button class="tab-btn ts"        onclick="showTab('ts',this)">📊 Жиынтық</button>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     TAB 1 — CONSUMERS
+══════════════════════════════════════════ -->
+<div id="t1" class="tab-panel active">
+
+  <!-- [1] Нұсқаулық -->
+  <div class="card" style="border-left:4px solid var(--red);">
+    <div class="card-title">📋 1-топ: Тұтынушылар — Нұсқаулық</div>
+    <div class="g1-guide-grid">
+      <div class="g1-guide-block">
+        <div class="g1-guide-label">🛍️ Тұтынушылық стратегия деген не?</div>
+        <p style="font-size:0.84rem;line-height:1.55;">Сатып алуды мақсатсыз жасау — бар ақшаны немесе несиені тауарға жұмсау. Бүгін жақсы сезіледі, ертең міндеттеме болады.</p>
+      </div>
+      <div class="g1-guide-block">
+        <div class="g1-guide-label">🔗 Дидро эффектісінің пайда болуы</div>
+        <p style="font-size:0.84rem;line-height:1.55;">Француз философы Дени Дидроға біреу қымбат қызыл халат сыйлайды. Жаңа халат ескі жиһазбен үйлеспегендіктен, ол креслосын, сосын үстелін, сосын кілемдерін ауыстырып, соңында қарызға батады.</p>
+      </div>
+      <div class="g1-guide-block" style="grid-column:1/-1;">
+        <div class="g1-guide-label">📌 Топтың міндеті</div>
+        <ol style="margin:0 0 0 18px;line-height:1.9;font-size:0.88rem;">
+          <li>Төменнен <strong>бір телефон брендін таңдаңыздар</strong></li>
+          <li>Жыл сайын жаңа сатып алуларды <strong>кезекпен ашыңыздар</strong></li>
+          <li>Теңгерімді <strong>өздеріңіз есептеңіздер:</strong> (алдыңғы қарыз + жаңа алым) × 1,24</li>
+          <li>4 жылдан кейін Айгерімнің жағдайын <strong>мұғалімдерге баяндаңыздар</strong></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character -->
+  <div class="character-card">
+    <div class="character-avatar">👩</div>
+    <div>
+      <h2>Айгерім, 28 жас</h2>
+      <p>Жас маман. 2022 жылы туыстарынан <strong>1 000 000 теңге</strong> сыйлық алды. Ақша жетпесе — несиеге алады!</p>
+      <span class="task-label">Есеп: алдыңғы қарыз + жаңа алым − сатқаны = жыл соңы</span>
+    </div>
+  </div>
+
+  <!-- [2] Brand selection -->
+  <div class="card">
+    <div class="card-title">📱 2022 жыл — Қандай телефон аласыз?</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;">Топ ретінде <strong>бір брендті таңдаңыздар</strong>. Содан кейін Айгерімнің 4 жылдық Дидро эффектісі жолы кезекпен ашылады.</p>
+    <div class="g1-brand-grid" id="g1-brand-grid">
+      <div class="g1-brand-card" data-brand="apple" onclick="g1_selectBrand('apple')">
+        <div class="g1-brand-emoji">📱</div>
+        <div class="g1-brand-name">Apple</div>
+        <div class="g1-brand-model">iPhone 14 Pro Max 1TB</div>
+        <div class="g1-brand-price">980 000 тг</div>
+        <div class="g1-brand-remain pos">Қалдық: 20 000 тг</div>
+        <div class="g1-brand-desc">Face ID · Pro камера · iOS экожүйе</div>
+      </div>
+      <div class="g1-brand-card" data-brand="samsung" onclick="g1_selectBrand('samsung')">
+        <div class="g1-brand-emoji">📱</div>
+        <div class="g1-brand-name">Samsung</div>
+        <div class="g1-brand-model">Galaxy Z Fold 4 1TB</div>
+        <div class="g1-brand-price">950 000 тг</div>
+        <div class="g1-brand-remain pos">Қалдық: 50 000 тг</div>
+        <div class="g1-brand-desc">Бүктемелі экран · Galaxy AI</div>
+      </div>
+      <div class="g1-brand-card" data-brand="huawei" onclick="g1_selectBrand('huawei')">
+        <div class="g1-brand-emoji">📱</div>
+        <div class="g1-brand-name">Huawei</div>
+        <div class="g1-brand-model">Mate 50 RS</div>
+        <div class="g1-brand-price">1 000 000 тг</div>
+        <div class="g1-brand-remain" style="color:var(--muted);">Қалдық: 0 тг</div>
+        <div class="g1-brand-desc">Leica камера · Huawei экожүйе</div>
+      </div>
+      <div class="g1-brand-card" data-brand="sony" onclick="g1_selectBrand('sony')">
+        <div class="g1-brand-emoji">📱</div>
+        <div class="g1-brand-name">Sony</div>
+        <div class="g1-brand-model">Xperia 1 IV</div>
+        <div class="g1-brand-price">780 000 тг</div>
+        <div class="g1-brand-remain pos">Қалдық: 220 000 тг</div>
+        <div class="g1-brand-desc">4K видео · Zeiss оптика · блогерлерге</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- [3–5] Year containers (JS-populated) -->
+  <div id="g1-year-2023" class="g1-year-card"></div>
+  <div id="g1-year-2024" class="g1-year-card"></div>
+  <div id="g1-year-2025" class="g1-year-card"></div>
+
+  <!-- [6] Final result -->
+  <div id="g1-result" class="result-box bad" style="display:none;">
+    <div class="result-headline" id="g1-final-num">−5 045 888 тг</div>
+    <div class="result-label">2026 жылғы жиынтық несие қарызы (пайызбен)</div>
+    <table class="year-table" id="g1-result-table">
+      <thead><tr>
+        <th>Жыл</th><th>Алғандары</th><th style="color:#16a34a;">Сатқаны (+)</th><th>Алғаны (−)</th><th>Жыл соңындағы сумма</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="result-message mt12" id="g1-result-msg"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 2 — INVESTORS
+══════════════════════════════════════════ -->
+<div id="t3" class="tab-panel">
+
+  <!-- [1] Guide -->
+  <div class="card" style="border-left:4px solid #7c3aed;">
+    <div class="card-title">📋 3-топ: Инвесторлар — Нұсқаулық</div>
+    <div class="g1-guide-grid">
+      <div class="g1-guide-block" style="background:#f5f3ff;">
+        <div class="g1-guide-label" style="color:#7c3aed;">📈 Инвестиция деген не?</div>
+        <p style="font-size:0.84rem;line-height:1.55;">Ақшаны компания акциясына салып, сол компанияның бизнесінен пайда алу. Акция бағасы өсті — ақшаңыз өсті. Түсті — шығын.</p>
+      </div>
+      <div class="g1-guide-block" style="background:#f5f3ff;">
+        <div class="g1-guide-label" style="color:#7c3aed;">🧺 Диверсификация деген не?</div>
+        <p style="font-size:0.84rem;line-height:1.55;">«Барлық жұмыртқаны бір себетке салма». 5 компанияға бөліп салу — біреуі түссе, қалғандары жабады.</p>
+      </div>
+      <div class="g1-guide-block" style="background:#f5f3ff;grid-column:1/-1;">
+        <div class="g1-guide-label" style="color:#7c3aed;">📌 Топтың міндеті</div>
+        <ol style="margin:0 0 0 18px;line-height:1.9;font-size:0.88rem;">
+          <li>Әр санаттан <strong>бір компанияны таңдаңыздар</strong> (барлығы 5 компания)</li>
+          <li>Жыл сайынғы жаңалықтарды <strong>кезекпен ашыңыздар</strong></li>
+          <li>Әр компания мәнін <strong>коэффициентке көбейтіп есептеңіздер</strong></li>
+          <li>3 жылдан кейін Асқардың жалпы қоржынын <strong>мұғалімдерге баяндаңыздар</strong></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- [2] Character -->
+  <div class="character-card" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:#ddd6fe;">
+    <div class="character-avatar">👨‍💼</div>
+    <div>
+      <h2>Асқар, 35 жас</h2>
+      <p>2022 жылы брокерлік шот ашып, <strong>1 000 000 теңгені</strong> 5 компанияға тең бөліп салды — әрқайсысына <strong>200 000 тг</strong>.</p>
+      <span class="task-label" style="background:#7c3aed;">Есеп: алдыңғы мән × коэффициент = жаңа мән &nbsp;|&nbsp; × 1.XX = өсім &nbsp;|&nbsp; × 0.XX = шығын</span>
+    </div>
+  </div>
+
+  <!-- [3] Company selection -->
+  <div class="card">
+    <div class="card-title">🏢 3-топ: 2022 жыл — Қандай компанияларға инвестиция жасаймыз?</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;">Әр санаттан <strong>бір компанияны</strong> таңдаңыздар. Барлық 5 санаттан таңдалған соң портфельді іске қосасыздар.</p>
+    <div id="g2-category-grid"></div>
+    <div class="btn-row mt16" style="justify-content:center;">
+      <button class="btn btn-primary" id="g2-start-btn" onclick="g2_startPortfolio()" disabled
+        style="background:#7c3aed;font-size:1rem;padding:14px 32px;opacity:0.45;">
+        🚀 Портфельді іске қос — 2023 жылдан бастау
+      </button>
+    </div>
+  </div>
+
+  <!-- [4-6] Year containers -->
+  <div id="g2-year-2023" class="g1-year-card"></div>
+  <div id="g2-year-2024" class="g1-year-card"></div>
+  <div id="g2-year-2025" class="g1-year-card"></div>
+
+  <!-- [7] Result -->
+  <div id="g2-result" class="result-box mixed" style="display:none;">
+    <div class="result-headline" id="g2-final-num"></div>
+    <div class="result-label">2026 жылғы жиынтық қоржын құны</div>
+    <table class="year-table" id="g2-result-table">
+      <thead><tr>
+        <th>Компания</th>
+        <th class="num">2022 (бастапқы)</th>
+        <th class="num">2023</th>
+        <th class="num">2024</th>
+        <th class="num">2025 (соңы)</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="result-message mt12" id="g2-result-msg"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 3 — DEPOSITS
+══════════════════════════════════════════ -->
+<div id="t2" class="tab-panel">
+
+  <div class="character-card" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#a7f3d0;">
+    <div class="character-avatar">👩‍💼</div>
+    <div>
+      <h2>Гүлнәр, 32 жас</h2>
+      <p>Туыстарынан <strong>1 000 000 теңге</strong> алды. Оны депозитке салмақ. Міндетіңіз: жыл сайын ең тиімді депозитті таңдап, 4 жылдан кейін нәтижені мұғалімдерге баяндаңыздар.</p>
+      <span class="task-label" style="background:#059669;">Тапсырма: 2022–2025 жылдар бойынша ең тиімді депозитті таңдаңыздар</span>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:4px solid #059669;background:#ecfdf5;">
+    <div class="card-title">🛡️ Маңызды: ҚДКБҚ кепілдігі</div>
+    <p style="margin:0;">«Сіздер таңдаған кез келген банк банкрот болса да, мемлекет (ҚДКБҚ) сіздердің теңгедегі жинақ депозиттеріңізді <strong>20 миллион теңгеге дейін</strong>, ал долларлық депозиттеріңізді <strong>5 миллион теңгеге дейін</strong> толық қайтарып береді.»</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Депозит түрлері</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px;">
+      <div style="border:2px solid #3b82f6;border-radius:10px;padding:12px;">
+        <span style="background:#eff6ff;color:#3b82f6;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">Мерзімсіз</span>
+        <p style="margin:8px 0 0;font-size:0.82rem;">Ақшаны кез келген уақытта алуға болады. Пайызы төмендеу.</p>
+      </div>
+      <div style="border:2px solid #d97706;border-radius:10px;padding:12px;">
+        <span style="background:#fffbeb;color:#d97706;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">Мерзімді</span>
+        <p style="margin:8px 0 0;font-size:0.82rem;">Ақшаны алуға болады, бірақ пайызы жоғалады. Мөлшерлемесі орташа.</p>
+      </div>
+      <div style="border:2px solid #059669;border-radius:10px;padding:12px;">
+        <span style="background:#ecfdf5;color:#059669;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">Жинақ</span>
+        <p style="margin:8px 0 0;font-size:0.82rem;">Мерзімінен бұрын алуға болмайды. Пайызы ең жоғары.</p>
+      </div>
+      <div style="border:2px solid #6b7280;border-radius:10px;padding:12px;">
+        <span style="background:#f9fafb;color:#6b7280;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">USD</span>
+        <p style="margin:8px 0 0;font-size:0.82rem;">АҚШ долларымен. Қорғаныштық, бірақ пайызы өте төмен.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="g3-year-2022"></div>
+  <div id="g3-year-2023"></div>
+  <div id="g3-year-2024"></div>
+  <div id="g3-year-2025"></div>
+  <div id="g3-result"></div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 4 — SMART PERSON
+══════════════════════════════════════════ -->
+<div id="t4" class="tab-panel">
+
+  <div class="character-card" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a;">
+    <div class="character-avatar">👨</div>
+    <div>
+      <h2>Нұрлан, 30 жас</h2>
+      <p>Айлық жалақысы <strong>250 000 тг</strong>, бірақ <strong>1 000 000 тг</strong> несие қарызы бар (18% жылдық). 50/30/20 стратегиясын қолданбақ.</p>
+      <span class="task-label" style="background:var(--gold);">Тапсырма: 4 жылдан кейін Нұрланның жағдайын есептеңіздер</span>
+    </div>
+  </div>
+
+  <!-- 50/30/20 бюджет -->
+  <div class="card">
+    <div class="card-title">📊 50 / 30 / 20 — Ай сайынғы бюджет</div>
+    <div class="budget-bar">
+      <div class="seg" style="width:50%;background:#1d4ed8;">50%</div>
+      <div class="seg" style="width:30%;background:#7c3aed;">30%</div>
+      <div class="seg" style="width:20%;background:#059669;">20%</div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Жол</th><th>Бағыт</th><th class="num">Ай сайын (тг)</th></tr></thead>
+      <tbody>
+        <tr style="background:#eff6ff;">
+          <td rowspan="3"><span class="tag" style="background:#dbeafe;color:#1d4ed8;white-space:nowrap;">50% · 125 000</span></td>
+          <td>🏠 Пәтер жалдамасы</td><td class="num" style="font-weight:700;">80 000</td>
+        </tr>
+        <tr style="background:#eff6ff;">
+          <td>🍱 Тамақ</td><td class="num" style="font-weight:700;">25 000</td>
+        </tr>
+        <tr style="background:#eff6ff;">
+          <td>💡 Коммуналдық + көлік</td><td class="num" style="font-weight:700;">20 000</td>
+        </tr>
+        <tr style="background:#f5f3ff;">
+          <td rowspan="2"><span class="tag" style="background:#ede9fe;color:#7c3aed;white-space:nowrap;">30% · 75 000</span></td>
+          <td>🛒 Тұрмыстық шығындар</td><td class="num" style="font-weight:700;">30 000</td>
+        </tr>
+        <tr style="background:#f5f3ff;">
+          <td>💳 Несие өтеу (45к/ай × 12 = 540к/жыл)</td><td class="num" style="font-weight:700;color:#dc2626;">45 000</td>
+        </tr>
+        <tr style="background:#ecfdf5;">
+          <td rowspan="2"><span class="tag" style="background:#d1fae5;color:#065f46;white-space:nowrap;">20% · 50 000</span></td>
+          <td>🏦 Депозит жинақ (25к/ай × 12 = 300к/жыл)</td><td class="num" style="font-weight:700;color:#059669;">25 000</td>
+        </tr>
+        <tr style="background:#ecfdf5;">
+          <td>📊 Инвестиция (25к/ай × 12 = 300к/жыл)</td><td class="num" style="font-weight:700;color:#059669;">25 000</td>
+        </tr>
+        <tr style="border-top:2px solid var(--border);">
+          <td><strong>Жиыны</strong></td><td><strong>Жалақы = 250 000 тг/ай</strong></td><td class="num" style="font-weight:800;font-size:1rem;">250 000</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Таңдау -->
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">🎯 Жинақ құралдарын таңдаңыз</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">
+      20% = 50 000 тг/ай → депозитке 25 000 + инвестицияға 25 000. Қай нұсқаны таңдайсыз?
+    </p>
+
+    <!-- Deposit -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:0.9rem;font-weight:700;margin-bottom:8px;">🏦 Депозит (25 000 тг/ай):</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div id="g4-dep-kaspi" onclick="g4_selectDep('kaspi')"
+             style="border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;">
+          <div style="font-weight:700;">Kaspi Депозит</div>
+          <div style="font-size:0.78rem;color:var(--muted);">Мерзімді, 12 ай</div>
+          <div style="font-size:1.5rem;font-weight:800;color:#3b82f6;margin-top:4px;">14%</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Тұрақты пайыз, кепілді</div>
+        </div>
+        <div id="g4-dep-bck" onclick="g4_selectDep('bck')"
+             style="border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;">
+          <div style="font-weight:700;">БЦК Жинақ</div>
+          <div style="font-size:0.78rem;color:var(--muted);">Жинақтаушы депозит</div>
+          <div style="font-size:1.5rem;font-weight:800;color:#7c3aed;margin-top:4px;">17%</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Жоғары пайыз, мерзімсіз</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:0.9rem;font-weight:700;margin-bottom:8px;">📊 Инвестиция (25 000 тг/ай):</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+        <div id="g4-inv-high" onclick="g4_selectInv('high')"
+             style="border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;">
+          <div style="font-size:1.3rem;margin-bottom:4px;">📈</div>
+          <div style="font-weight:700;font-size:0.88rem;">Жоғары тәуекел</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">NVIDIA/Tesla үлгісі. Үлкен пайда мүмкін, бірақ тәуекелді.</div>
+          <div style="margin-top:6px;font-size:0.75rem;color:#dc2626;font-weight:700;">⚠️ Тәуекел жоғары</div>
+        </div>
+        <div id="g4-inv-stable" onclick="g4_selectInv('stable')"
+             style="border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;">
+          <div style="font-size:1.3rem;margin-bottom:4px;">🏛️</div>
+          <div style="font-weight:700;font-size:0.88rem;">Тұрақты (ETF)</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Индекс қоры. Тұрақты өсім, тәуекел төмен.</div>
+          <div style="margin-top:6px;font-size:0.75rem;color:#059669;font-weight:700;">✅ Тәуекел төмен</div>
+        </div>
+        <div id="g4-inv-bad" onclick="g4_selectInv('bad')"
+             style="border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;">
+          <div style="font-size:1.3rem;margin-bottom:4px;">📉</div>
+          <div style="font-weight:700;font-size:0.88rem;">Peloton (PTON)</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">Пандемия кезінде атышулы болды, одан кейін күрт құлады.</div>
+          <div style="margin-top:6px;font-size:0.75rem;color:#9ca3af;font-weight:700;">❓ Сынап көру</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button id="g4-start-btn" class="btn btn-gold" disabled onclick="g4_startGame()" style="opacity:0.45;">
+        🚀 Есептеуді бастау →
+      </button>
+    </div>
+  </div>
+
+  <div id="g4-year-2022"></div>
+  <div id="g4-year-2023"></div>
+  <div id="g4-year-2024"></div>
+  <div id="g4-year-2025"></div>
+  <div id="g4-result"></div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB SUMMARY
+══════════════════════════════════════════ -->
+<div id="ts" class="tab-panel">
+
+  <div class="card">
+    <div class="card-title">📊 4 жыл соңындағы жиынтық нәтиже</div>
+    <div class="summary-row">
+      <div class="summary-card c1">
+        <div class="s-top">1-топ</div>
+        <div class="s-name">🛍️ Тұтынушылар (Айгерім)</div>
+        <div class="s-amount" id="ts-g1-amount">−4,4М...−6,7М тг</div>
+        <div class="s-emoji">😟</div>
+        <div style="font-size:0.75rem;color:var(--red);margin-top:4px;font-weight:600;" id="ts-g1-label">Брендке байланысты</div>
+      </div>
+      <div class="summary-card c2">
+        <div class="s-top">2-топ</div>
+        <div class="s-name">🏦 Депозит (Гүлнәр)</div>
+        <div class="s-amount" id="ts-g2-amount">—</div>
+        <div class="s-emoji">🏦</div>
+        <div style="font-size:0.75rem;color:var(--green);margin-top:4px;font-weight:600;" id="ts-g2-label">Нәтиже күтілуде</div>
+      </div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-card c3">
+        <div class="s-top">3-топ</div>
+        <div class="s-name">📈 Инвесторлар (Асқар)</div>
+        <div class="s-amount" id="ts-g3-amount">—</div>
+        <div class="s-emoji">📈</div>
+        <div style="font-size:0.75rem;color:var(--purple);margin-top:4px;font-weight:600;" id="ts-g3-label">Нәтиже күтілуде</div>
+      </div>
+      <div class="summary-card c4">
+        <div class="s-top">4-топ</div>
+        <div class="s-name">🎯 Сауатты азамат (Нұрлан)</div>
+        <div class="s-amount" id="ts-g4-amount">—</div>
+        <div class="s-emoji">🚀</div>
+        <div style="font-size:0.75rem;color:var(--gold);margin-top:4px;font-weight:600;" id="ts-g4-label">Нәтиже күтілуде</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📉 Көрнекі салыстыру</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">1-топ (Тұтынушы)</div>
+        <div class="bar-track"><div class="bar-fill" id="ts-g1-bar" style="background:var(--red);width:3%;">−</div></div>
+        <div class="bar-value" style="color:var(--red);" id="ts-g1-bar-val">−?</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">2-топ (Депозит)</div>
+        <div class="bar-track"><div class="bar-fill" id="ts-g2-bar" style="background:var(--green);width:0%;">—</div></div>
+        <div class="bar-value" style="color:var(--green);" id="ts-g2-bar-val">—</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">3-топ (Инвестор)</div>
+        <div class="bar-track"><div class="bar-fill" id="ts-g3-bar" style="background:var(--purple);width:0%;">—</div></div>
+        <div class="bar-value" style="color:var(--purple);" id="ts-g3-bar-val">—</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">4-топ (Сауатты)</div>
+        <div class="bar-track"><div class="bar-fill" id="ts-g4-bar" style="background:var(--gold);width:0%;">—</div></div>
+        <div class="bar-value" style="color:var(--gold);" id="ts-g4-bar-val">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-box">
+    <h3>🎓 Мастер-класстың негізгі қорытындысы</h3>
+    <p>
+      Қаржылық сауатты адам <strong>математикалық дағдыны</strong> пайдалана отырып, дұрыс есептеп, қаржысын дұрыс басқарады.
+      Депозит, инвестиция, несие — бәрін <em>сандармен</em> түсіндіру керек.
+      Міне, осылай біз лицей оқушыларына <strong>қаржылық сауаттылықты математика арқылы</strong> үйретеміз.
+    </p>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 't2') g3_init();
+}
+
+/* ── Format helpers ── */
+function fmt(n) {
+  const sign = n >= 0 ? '' : '−';
+  return sign + Math.abs(Math.round(n)).toLocaleString('kk-KZ') + ' тг';
+}
+function fmtN(n) {
+  return (n >= 0 ? '+' : '−') + Math.abs(Math.round(n)).toLocaleString('kk-KZ') + ' тг';
+}
+
+/* ══ Firebase real-time sync ══ */
+const FB_URL = 'https://masterclass-5e57c-default-rtdb.europe-west1.firebasedatabase.app/results';
+
+function fbWrite(group, data) {
+  fetch(FB_URL + '/' + group + '.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(function() {});
+}
+
+function fbApply(group, data) {
+  const amEl  = document.getElementById('ts-' + group + '-amount');
+  const lbEl  = document.getElementById('ts-' + group + '-label');
+  const barEl = document.getElementById('ts-' + group + '-bar');
+  const bvEl  = document.getElementById('ts-' + group + '-bar-val');
+  if (!amEl || !data) return;
+  amEl.textContent   = data.amount;
+  lbEl.textContent   = data.label;
+  barEl.style.width  = data.barPct + '%';
+  barEl.textContent  = data.barText;
+  bvEl.textContent   = data.barVal;
+}
+
+function fbListen() {
+  const src = new EventSource(FB_URL + '.json?accept=text/event-stream');
+  src.addEventListener('put', function(e) {
+    try {
+      const msg = JSON.parse(e.data);
+      if (!msg.data) return;
+      if (msg.path === '/') {
+        Object.keys(msg.data).forEach(function(g) { fbApply(g, msg.data[g]); });
+      } else {
+        fbApply(msg.path.replace('/', ''), msg.data);
+      }
+    } catch(err) {}
+  });
+}
+
+/* ══ GROUP 1 — Дидро эффектісі (2022–2026) ══ */
+const g1_brands = {
+  apple: {
+    emoji:'📱', name:'Apple', phone:'iPhone 14 Pro Max 1TB', price2022:980000, cash:20000,
+    years:[
+      { yr:2023, situation:'«жаңа iPhone 15 Pro Max шықты — менің iPhone 14-ім баяу болып қалды, сондықтан телефонымды ауыстырамын және жанына AirPods Max алуым керек»',
+        sell:[{n:'iPhone 14 Pro Max 1TB (1 жыл қолданылған)',p:400000}],
+        items:[{n:'iPhone 15 Pro Max 1TB',p:1050000},{n:'AirPods Max',p:360000}] },
+      { yr:2024, situation:'«Барлық достарым Apple Watch тағады, мен неге тақпаймын?»',
+        sell:[{n:'AirPods Max (1 жыл қолданылған)',p:120000}],
+        items:[{n:'Apple Watch Ultra 3',p:550000}] },
+      { yr:2025, situation:'«iPhone 17 Pro Max шықты — камера технологиясы мүлде өзгерді!»',
+        sell:[{n:'iPhone 15 Pro Max 1TB (2 жыл қолданылған)',p:280000},{n:'Apple Watch Ultra 3 (1 жыл қолданылған)',p:230000}],
+        items:[{n:'iPhone 17 Pro Max 1TB',p:1250000}] }
+    ]
+  },
+  samsung: {
+    emoji:'📱', name:'Samsung', phone:'Galaxy Z Fold 4 1TB', price2022:950000, cash:50000,
+    years:[
+      { yr:2023, situation:'«жаңа Galaxy Z Fold 5 шықты — менің Fold 4-ім ескіріп қалды, сондықтан ауыстырамын. Galaxy AI бар, Watch Ultra да алуым керек»',
+        sell:[{n:'Galaxy Z Fold 4 1TB (1 жыл қолданылған)',p:480000}],
+        items:[{n:'Galaxy Z Fold 5 1TB',p:1000000},{n:'Galaxy Watch Ultra',p:330000}] },
+      { yr:2024, situation:'«Galaxy Ring + Z Fold 6 — Galaxy AI енді саусағыңда!»',
+        sell:[{n:'Galaxy Z Fold 5 1TB (1 жыл қолданылған)',p:500000},{n:'Galaxy Watch Ultra (1 жыл қолданылған)',p:180000}],
+        items:[{n:'Galaxy Ring',p:210000},{n:'Galaxy Z Fold 6 1TB',p:1150000}] },
+      { yr:2025, situation:'«Galaxy Buds4 Pro шықты. Z Fold 7 "өзін-өзі жаңартады" деп жарнама жасады!»',
+        sell:[{n:'Galaxy Z Fold 6 1TB (1 жыл қолданылған)',p:550000},{n:'Galaxy Ring (1 жыл қолданылған)',p:120000}],
+        items:[{n:'Galaxy Buds4 Pro',p:140000},{n:'Galaxy Z Fold 7 1TB',p:1200000}] }
+    ]
+  },
+  huawei: {
+    emoji:'📱', name:'Huawei', phone:'Huawei Mate 50 RS', price2022:1000000, cash:0,
+    years:[
+      { yr:2023, situation:'«жаңа Mate 60 RS шықты — Huawei өзіндік 5G чипін жасады. Менің Mate 50 RS-ім ескі болды, ауыстырмасам болмайды. FreeBuds Pro 3 де қосамын»',
+        sell:[{n:'Huawei Mate 50 RS (1 жыл қолданылған)',p:380000}],
+        items:[{n:'Huawei Mate 60 RS',p:1000000},{n:'FreeBuds Pro 3',p:115000}] },
+      { yr:2024, situation:'«Mate XT Trifold шықты — ҮШҚАТПАР ЭКРАН! Бұны алмасам Huawei фанаты емеспін»',
+        sell:[{n:'Huawei Mate 60 RS (1 жыл қолданылған)',p:400000},{n:'FreeBuds Pro 3 (1 жыл қолданылған)',p:45000}],
+        items:[{n:'Huawei Mate XT Trifold',p:1500000}] },
+      { yr:2025, situation:'«Watch Buds (сағат + құлаққаш) + Mate 70 RS Pro+ — 2025 жылдың ең жақсы телефоны!»',
+        sell:[{n:'Huawei Mate XT Trifold (1 жыл қолданылған)',p:600000}],
+        items:[{n:'Huawei Watch Buds',p:240000},{n:'Huawei Mate XT/70 RS',p:1550000}] }
+    ]
+  },
+  sony: {
+    emoji:'📱', name:'Sony', phone:'Sony Xperia 1 IV', price2022:780000, cash:220000,
+    years:[
+      { yr:2023, situation:'«жаңа Sony Xperia 1 V шықты — камерасы жаңа деңгейге шықты. Ескі Xperia 1 IV-ті сатып, жаңасын алуым керек. WH-1000XM6 да дыбыссыздандырудың рекорды — оны да алуым керек»',
+        sell:[{n:'Sony Xperia 1 IV (1 жыл қолданылған)',p:300000}],
+        items:[{n:'Sony WH-1000XM6 (құлаққаш)',p:220000},{n:'Sony Xperia 1 V',p:820000}] },
+      { yr:2024, situation:'«Xperia Vlog Monitor блогерге міндетті! Xperia 1 VI жаңа стабилизатормен»',
+        sell:[{n:'Sony Xperia 1 V (1 жыл қолданылған)',p:320000},{n:'Sony WH-1000XM6 (1 жыл қолданылған)',p:110000}],
+        items:[{n:'Xperia Vlog Monitor',p:110000},{n:'Sony Xperia 1 VI',p:850000}] },
+      { yr:2025, situation:'«Sony WF-1000XM6 шықты — дыбыс мүлде өзге деңгейге! Xperia 1 VII Pro камера»',
+        sell:[{n:'Sony Xperia 1 VI (1 жыл қолданылған)',p:340000},{n:'Xperia Vlog Monitor (1 жыл қолданылған)',p:60000}],
+        items:[{n:'Sony WF-1000XM6 (TWS)',p:150000},{n:'Sony Xperia 1 VII',p:920000}] }
+    ]
+  }
+};
+
+let g1_brand = null;
+let g1_yearDebts = [];
+
+function g1_preCalc(key) {
+  const b = g1_brands[key];
+  let debt = 0, cash = b.cash;
+  g1_yearDebts = [];
+  b.years.forEach(yd => {
+    const sold = (yd.sell || []).reduce((s,i) => s + i.p, 0);
+    const bought = yd.items.reduce((s,i) => s + i.p, 0);
+    const totalCash = cash + sold;
+    const newCredit = Math.max(0, bought - totalCash);
+    debt = debt + newCredit;
+    cash = Math.max(0, totalCash - bought);
+    g1_yearDebts.push(debt);
+  });
+}
+
+function g1_checkAndNext(yr) {
+  const idx = yr - 2023;
+  const correct = g1_yearDebts[idx];
+  const inp = document.getElementById('g1-inp-' + yr);
+  const errEl = document.getElementById('g1-err-' + yr);
+  const raw = inp.value.replace(/[\s,\u00a0]/g, '');
+  const entered = parseInt(raw, 10);
+  if (isNaN(entered) || entered <= 0) {
+    errEl.innerHTML = `❌ Оң сан жазыңыз. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g1_proceed(${yr})" style="margin-left:10px;padding:4px 14px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block';
+    return;
+  }
+  const tolerance = Math.max(correct * 0.05, 50000);
+  if (Math.abs(entered - correct) <= tolerance) {
+    errEl.style.display = 'none';
+    inp.style.borderColor = 'var(--green)';
+    if (yr === 2025) { g1_calcFinal(); } else { g1_buildYearCard(yr + 1); }
+  } else {
+    errEl.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g1_proceed(${yr})" style="margin-left:10px;padding:4px 14px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block';
+    inp.style.borderColor = 'var(--red)';
+  }
+}
+
+function g1_proceed(yr) {
+  document.getElementById('g1-err-' + yr).style.display = 'none';
+  document.getElementById('g1-inp-' + yr).style.borderColor = 'var(--green)';
+  if (yr === 2025) { g1_calcFinal(); } else { g1_buildYearCard(yr + 1); }
+}
+
+function g1_selectBrand(key) {
+  g1_brand = key;
+  g1_preCalc(key);
+  document.querySelectorAll('.g1-brand-card').forEach(c => {
+    c.classList.remove('selected','dimmed');
+    c.classList.add(c.dataset.brand === key ? 'selected' : 'dimmed');
+  });
+  [2023,2024,2025].forEach(y => {
+    const el = document.getElementById('g1-year-' + y);
+    el.innerHTML = '';
+    el.style.display = 'none';
+  });
+  document.getElementById('g1-result').style.display = 'none';
+  g1_buildYearCard(2023);
+}
+
+function g1_buildYearCard(yr) {
+  const yd     = g1_brands[g1_brand].years[yr - 2023];
+  const el     = document.getElementById('g1-year-' + yr);
+  const sold   = (yd.sell || []).reduce((s,i) => s + i.p, 0);
+  const bought = yd.items.reduce((s,i) => s + i.p, 0);
+  const net    = bought - sold;
+
+  const sellRows = (yd.sell || []).map(i =>
+    `<tr style="background:#f0fdf4;">
+       <td>✅ ${i.n}</td>
+       <td class="num" style="color:var(--green);">+${i.p.toLocaleString('kk-KZ')} тг</td>
+       <td style="color:var(--green);font-size:0.78rem;">Сатты</td>
+     </tr>`
+  ).join('');
+  const buyRows = yd.items.map(i =>
+    `<tr><td>🛒 ${i.n}</td>
+       <td class="num negative">−${i.p.toLocaleString('kk-KZ')} тг</td>
+       <td><span class="tag tag-red">Несиеге</span></td>
+     </tr>`
+  ).join('');
+
+  const isLast = yr === 2025;
+  el.innerHTML = `
+    <div class="card mt16" style="border-left:4px solid var(--red);">
+      <div class="card-title" style="color:var(--red);">📅 ${yr} жыл</div>
+      <div class="g1-situation">💬 ${yd.situation}</div>
+      <table class="data-table mt12">
+        <thead><tr><th>Тауар / Іс-әрекет</th><th class="num">Сомасы (тг)</th><th>Ескерту</th></tr></thead>
+        <tbody>
+          ${sellRows}
+          ${buyRows}
+        </tbody>
+      </table>
+      <div class="step-box mt12">
+        <div class="step-num">Есеп ережесі</div>
+        <div class="step-text">(Алдыңғы қарыз + алғаны − сатқаны) × 1,24 = Жыл соңындағы сумма</div>
+      </div>
+      <div class="step-box mt12" style="background:#eff6ff;border-color:#3b82f6;">
+        <div class="step-num" style="background:#3b82f6;">Есептеп жаз</div>
+        <div class="step-text">Жоғарыдағы формула бойынша <strong>${yr} жыл соңындағы сумманы</strong> есептеп жазыңыз:</div>
+      </div>
+      <div class="btn-row mt12" style="align-items:center;">
+        <input type="number" id="g1-inp-${yr}" placeholder="Жыл соңындағы сумма (тг)"
+          style="padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:0.9rem;flex:1;min-width:0;">
+        <button class="btn btn-primary" onclick="g1_checkAndNext(${yr})">${isLast ? '⚡ Нәтижені тексер' : '✓ Тексеру →'}</button>
+      </div>
+      <div id="g1-err-${yr}" style="display:none;margin-top:8px;color:var(--red);font-size:0.85rem;font-weight:600;padding:8px;background:#fef2f2;border-radius:6px;"></div>
+    </div>`;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function g1_calcFinal() {
+  const b = g1_brands[g1_brand];
+  let debt = 0, cash = b.cash;
+  const rows = [];
+  b.years.forEach(yd => {
+    const sold   = (yd.sell || []).reduce((s,i) => s + i.p, 0);
+    const bought = yd.items.reduce((s,i) => s + i.p, 0);
+    const totalCash = cash + sold;
+    const fromCash  = Math.min(totalCash, bought);
+    const newCredit = Math.max(0, bought - totalCash);
+    debt = debt + newCredit;
+    cash = Math.max(0, totalCash - bought);
+    rows.push({ yr:yd.yr, items:yd.items, sell:yd.sell||[], bought, sold, net:bought-sold, debt });
+  });
+
+  const tbody = document.querySelector('#g1-result-table tbody');
+  tbody.innerHTML = '';
+  const r0 = document.createElement('tr');
+  r0.innerHTML = `<td><strong>2022</strong></td>
+    <td>${b.phone}</td>
+    <td class="num" style="color:var(--green);">—</td>
+    <td class="num negative">−${b.price2022.toLocaleString('kk-KZ')} тг</td>
+    <td class="num" style="color:var(--green);">${b.cash > 0 ? '+'+b.cash.toLocaleString('kk-KZ')+' тг қалдық' : '0 тг'}</td>`;
+  tbody.appendChild(r0);
+
+  rows.forEach(r => {
+    const buyStr  = r.items.map(i => i.n).join(' + ');
+    const sellStr = r.sell.map(i => i.n).join(' + ');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${r.yr}</strong></td>
+      <td style="font-size:0.75rem;">${buyStr}</td>
+      <td class="num" style="color:var(--green);font-size:0.82rem;">+${r.sold.toLocaleString('kk-KZ')} тг<br><span style="font-size:0.7rem;color:var(--muted);">${sellStr}</span></td>
+      <td class="num negative">−${r.bought.toLocaleString('kk-KZ')} тг</td>
+      <td class="num negative">−${r.debt.toLocaleString('kk-KZ')} тг</td>`;
+    tbody.appendChild(tr);
+  });
+
+  const finalDebt = rows[rows.length-1].debt;
+  document.getElementById('g1-final-num').textContent = '−' + finalDebt.toLocaleString('kk-KZ') + ' тг';
+  document.getElementById('g1-result-msg').innerHTML =
+    `🔴 <strong>Қорытынды (${b.emoji} ${b.name} жолы):</strong> Айгерім ескі заттарын сатып, жаңасын алды — бірақ Дидро эффектісі тоқтамады. Сатқанымен де, үнемі жаңа нәрсе алу арқылы 2026 жылы қолданылған жиынтық сумма — <strong>−${finalDebt.toLocaleString('kk-KZ')} тг</strong>. Ал бірнеше жыл бұрын Айгерімде 1 000 000 тг бар еді.`;
+
+  const box = document.getElementById('g1-result');
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+
+  // Update summary tab
+  const fmtM = (n) => '−' + (n/1000000).toFixed(1) + ' млн тг';
+  document.getElementById('ts-g1-amount').textContent = fmtM(finalDebt);
+  document.getElementById('ts-g1-label').textContent  = b.emoji + ' ' + b.name + ' жолы · Қарызда қалды';
+  // bar width relative to 7M max
+  const pct = Math.min(100, Math.round(finalDebt / 70000));
+  document.getElementById('ts-g1-bar').style.width = pct + '%';
+  document.getElementById('ts-g1-bar-val').textContent = fmtM(finalDebt);
+  fbWrite('g1', { amount: fmtM(finalDebt), label: b.emoji+' '+b.name+' жолы · Қарызда қалды', barPct: pct, barText: fmtM(finalDebt), barVal: fmtM(finalDebt) });
+}
+
+/* ══ GROUP 2 ══ */
+/* ══ GROUP 2 ══ */
+
+const g2_categories = [
+  { id:'growth',  name:'Тұрақты өсім',      emoji:'📈', color:'#059669',
+    companies:[
+      { key:'nvda', name:'NVIDIA',     ticker:'NVDA',
+        desc:'Жасанды интеллект пен графикаға арналған AI чиптер шығаратын әлемдік көшбасшы',
+        years:[
+          {yr:2023, pct:-15,  mult:0.85, news:'Крипто-майнинг күйреді, ойын индустриясы бәсеңдеді'},
+          {yr:2024, pct:+165, mult:2.65, news:'ChatGPT жарылысы: H100 AI чипіне дүниежүзілік сұраныс рекорд деңгейге жетті'},
+          {yr:2025, pct:+98,  mult:1.98, news:'10:1 акция бөлінуі + мәліметтер орталығынан рекордтық кіріс'}
+        ]},
+      { key:'msft', name:'Microsoft',  ticker:'MSFT',
+        desc:'Windows, Office, Azure бұлттық технологиялар алыбы',
+        years:[
+          {yr:2023, pct:-21, mult:0.79, news:'Инфляция қысымы — технология акциялары жаппай сатылды'},
+          {yr:2024, pct:+62, mult:1.62, news:'OpenAI серіктестігі + Copilot AI іске қосылды'},
+          {yr:2025, pct:+8,  mult:1.08, news:'Azure AI инфраструктурасы қарқынды өсті'}
+        ]}
+    ]},
+  { id:'decline', name:'Қатты құлаған',     emoji:'📉', color:'#dc2626',
+    companies:[
+      { key:'pton', name:'Peloton',    ticker:'PTON',
+        desc:'Үйде жаттығуға арналған "ақылды" тренажерлар мен интерактивті фитнес-платформа',
+        years:[
+          {yr:2023, pct:-66, mult:0.34, news:'Пандемия аяқталды — үй тренажерына сұраныс күрт түсті, мыңдаған жұмыскер жұмыссыз қалды'},
+          {yr:2024, pct:-58, mult:0.42, news:'Қаржылық шығын жалғасты + ребрендинг сәтсіз аяқталды'},
+          {yr:2025, pct:+40, mult:1.40, news:'Lululemon серіктестігі — шамалы қалпына келу байқалды'}
+        ]},
+      { key:'pfe',  name:'Pfizer',     ticker:'PFE',
+        desc:'COVID-19 вакцинасын қоса алғанда дәрі-дәрмектер мен вакциналар өндіреді',
+        years:[
+          {yr:2023, pct:-25, mult:0.75, news:'COVID вакцинасына сұраныс азайды, кіріс күрт төмендеді'},
+          {yr:2024, pct:-34, mult:0.66, news:'COVID кірісі толық жоғалды + Seagen сатып алу шығындары'},
+          {yr:2025, pct:-7,  mult:0.93, news:'Онкология бойынша жаңа зерттеу стратегиясы хабарланды'}
+        ]}
+    ]},
+  { id:'recover', name:'Құлап сосын өскен', emoji:'🔄', color:'#7c3aed',
+    companies:[
+      { key:'meta', name:'Meta',       ticker:'META',
+        desc:'Facebook, Instagram, WhatsApp желілерін біріктіретін виртуалды шындық пен жарнама алыбы',
+        years:[
+          {yr:2023, pct:-63, mult:0.37, news:'Метавселенаға шамадан тыс инвестиция + жарнама кірісі азайды'},
+          {yr:2024, pct:+220,mult:3.20, news:'«Үнемділік жылы»: 25% шығынды қысқартты + Reels табысты болды'},
+          {yr:2025, pct:+54, mult:1.54, news:'Алғаш рет дивиденд жариялады + AI модельдері сәтті болды'}
+        ]},
+      { key:'nflx', name:'Netflix',    ticker:'NFLX',
+        desc:'Фильмдер мен сериалдарды онлайн форматта ұсынатын әлемдік стримингтік сервис',
+        years:[
+          {yr:2023, pct:-41, mult:0.59, news:'10 жылда алғаш рет 200 000 жазылушы жоғалтты'},
+          {yr:2024, pct:+78, mult:1.78, news:'Паролемен бөлісуге тыйым → жаңа жазылушылар қарқыны артты'},
+          {yr:2025, pct:+60, mult:1.60, news:'WWE, NFL тікелей эфирлері + жарнамалы жазылым моделі іске қосылды'}
+        ]}
+    ]},
+  { id:'peak',    name:'Өсіп сосын түскен', emoji:'🎢', color:'#d97706',
+    companies:[
+      { key:'tsla', name:'Tesla',      ticker:'TSLA',
+        desc:'Электр көліктерін, күн батареяларын және энергия жинақтау жүйелерін шығарады',
+        years:[
+          {yr:2023, pct:-43, mult:0.57, news:'Twitter сатып алу инвесторларды алаңдатты, сенім төмендеді'},
+          {yr:2024, pct:-6,  mult:0.94, news:'Нарықтық үлесті сақтау үшін баға соғысы — маржа азайды'},
+          {yr:2025, pct:+130,mult:2.30, news:'Megapack батарея сатылымы рекорд жаңартты + Musk/Trump эффектісі'}
+        ]},
+      { key:'mrna', name:'Moderna',    ticker:'MRNA',
+        desc:'mRNA технологиясы негізінде заманауи вакциналар мен дәрілерді зерттейтін биотехнологиялық компания',
+        years:[
+          {yr:2023, pct:-35, mult:0.65, news:'Вакцина нарығы тойынды — стратегия белгісіз болды'},
+          {yr:2024, pct:-27, mult:0.73, news:'COVID нарығы тарылды + зерттеу жобалары кешігуде'},
+          {yr:2025, pct:-61, mult:0.39, news:'Онкология вакцинасының оң нәтижелері бар — бірақ шығын өте жоғары'}
+        ]}
+    ]},
+  { id:'stable',  name:'Тұрақты',           emoji:'🏛️', color:'#1d4ed8',
+    companies:[
+      { key:'ko',   name:'Coca-Cola',  ticker:'KO',
+        desc:'Әлемнің түкпір-түкпірінде сатылатын алкогольсіз сусындар мен шәрбаттар шығаратын жаһандық бренд',
+        years:[
+          {yr:2023, pct:-2,  mult:0.98, news:'Логистика қиындықтары болды, бірақ тұрақтылығын сақтады'},
+          {yr:2024, pct:0,   mult:1.00, news:'Сатылым көлемі мен баға теңгерімін сақтады'},
+          {yr:2025, pct:+17, mult:1.17, news:'Азия мен Латын Америкасы нарығында сұраныс өсті'}
+        ]},
+      { key:'pg',   name:'P&G',        ticker:'PG',
+        desc:'Ariel, Gillette, Pampers, Tide — күнделікті гигиеналық тауарлар мен жуғыш заттар өндірушісі',
+        years:[
+          {yr:2023, pct:-8,  mult:0.92, news:'Шикізат пен энергия бағасы өсті — өндіріс шығындары артты'},
+          {yr:2024, pct:+5,  mult:1.05, news:'10% баға өсімі инфляцияны жеңді, пайда артты'},
+          {yr:2025, pct:+12, mult:1.12, news:'Жаһандық нарықта тұрақты сұраныс жалғасты'}
+        ]}
+    ]}
+];
+
+let g2_selected = {};
+
+function g2_renderCategoryGrid() {
+  const grid = document.getElementById('g2-category-grid');
+  if (!grid) return;
+  grid.innerHTML = g2_categories.map(cat => `
+    <div class="g2-category-section" style="border-left:4px solid ${cat.color};">
+      <div class="g2-category-header" style="color:${cat.color};">
+        ${cat.emoji}
+        <span class="g2-cat-amount">200 000 тг бөлінеді</span>
+      </div>
+      <div class="g2-company-grid">
+        ${cat.companies.map(c => `
+          <div class="g2-company-card" data-cat="${cat.id}" data-comp="${c.key}"
+               onclick="g2_selectCompany('${cat.id}','${c.key}')">
+            <div class="g2-company-name">${c.name}
+              <span class="g2-company-ticker">&nbsp;${c.ticker}</span>
+            </div>
+            <div class="g2-company-desc">${c.desc}</div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function g2_selectCompany(catId, compKey) {
+  if (g2_selected[catId] === compKey) {
+    delete g2_selected[catId];
+    document.querySelectorAll(`.g2-company-card[data-cat="${catId}"]`).forEach(c => {
+      c.classList.remove('selected','dimmed');
+      c.style.borderColor = '';
+    });
+  } else {
+    g2_selected[catId] = compKey;
+    const color = g2_categories.find(x=>x.id===catId).color;
+    document.querySelectorAll(`.g2-company-card[data-cat="${catId}"]`).forEach(c => {
+      c.classList.remove('selected','dimmed');
+      c.classList.add(c.dataset.comp === compKey ? 'selected' : 'dimmed');
+      if (c.classList.contains('selected')) c.style.borderColor = color;
+    });
+  }
+  const allSelected = g2_categories.every(cat => g2_selected[cat.id]);
+  const btn = document.getElementById('g2-start-btn');
+  btn.disabled = !allSelected;
+  btn.style.opacity = allSelected ? '1' : '0.45';
+}
+
+let g2_yearTotals = [];
+
+function g2_preCalc() {
+  const INIT = 200000;
+  g2_yearTotals = [0, 0, 0];
+  g2_categories.forEach(cat => {
+    const comp = cat.companies.find(c => c.key === g2_selected[cat.id]);
+    let val = INIT;
+    comp.years.forEach((yd, idx) => {
+      val = Math.round(val * yd.mult);
+      g2_yearTotals[idx] += val;
+    });
+  });
+}
+
+function g2_checkAndNext2(yr) {
+  const idx = yr - 2023;
+  const correct = g2_yearTotals[idx];
+  const inp = document.getElementById('g2-inp-' + yr);
+  const errEl = document.getElementById('g2-err-' + yr);
+  const raw = inp.value.replace(/[\s,\u00a0]/g, '');
+  const entered = parseInt(raw, 10);
+  if (isNaN(entered) || entered <= 0) {
+    errEl.innerHTML = `❌ Оң сан жазыңыз. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g2_proceed(${yr})" style="margin-left:10px;padding:4px 14px;background:#7c3aed;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block';
+    return;
+  }
+  const tolerance = Math.max(correct * 0.05, 50000);
+  if (Math.abs(entered - correct) <= tolerance) {
+    errEl.style.display = 'none';
+    inp.style.borderColor = 'var(--green)';
+    if (yr === 2025) { g2_calcFinal2(); } else { g2_buildYearCard2(yr + 1); }
+  } else {
+    errEl.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g2_proceed(${yr})" style="margin-left:10px;padding:4px 14px;background:#7c3aed;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block';
+    inp.style.borderColor = 'var(--red)';
+  }
+}
+
+function g2_proceed(yr) {
+  document.getElementById('g2-err-' + yr).style.display = 'none';
+  document.getElementById('g2-inp-' + yr).style.borderColor = 'var(--green)';
+  if (yr === 2025) { g2_calcFinal2(); } else { g2_buildYearCard2(yr + 1); }
+}
+
+function g2_startPortfolio() {
+  [2023,2024,2025].forEach(y => {
+    const el = document.getElementById('g2-year-' + y);
+    el.innerHTML = ''; el.style.display = 'none';
+  });
+  document.getElementById('g2-result').style.display = 'none';
+  g2_preCalc();
+  g2_buildYearCard2(2023);
+}
+
+function g2_buildYearCard2(yr) {
+  const el   = document.getElementById('g2-year-' + yr);
+  const yIdx = yr - 2023;
+  const newsHTML = g2_categories.map(cat => {
+    const comp = cat.companies.find(c => c.key === g2_selected[cat.id]);
+    const yd   = comp.years[yIdx];
+    const up   = yd.pct >= 0;
+    return `
+      <div class="g2-news-item" style="border-left:3px solid ${cat.color};">
+        <div class="g2-news-company">
+          <span style="font-size:1rem;">${cat.emoji}</span>
+          <strong>${comp.name}</strong>
+          <span class="g2-ticker">${comp.ticker}</span>
+          <span class="g2-pct-badge ${up?'g2-pct-up':'g2-pct-down'}">${up?'+':''}${yd.pct}%</span>
+        </div>
+        <div class="g2-news-text">💬 ${yd.news}</div>
+        <div class="g2-calc-hint">
+          <span class="g2-mult-badge" style="color:${up?'#16a34a':'#dc2626'};">${up?'↑':'↓'} × ${yd.mult.toFixed(2)}</span>
+          <span class="g2-formula">Есеп: ? тг × ${yd.mult.toFixed(2)} = ?</span>
+        </div>
+      </div>`;
+  }).join('');
+  const isLast = yr === 2025;
+  el.innerHTML = `
+    <div class="card mt16" style="border-left:4px solid #7c3aed;">
+      <div class="card-title" style="color:#7c3aed;">📅 ${yr} жыл — Нарық жаңалықтары</div>
+      <div class="g2-news-list">${newsHTML}</div>
+      <div class="step-box mt12">
+        <div class="step-num">Есеп ережесі</div>
+        <div class="step-text">Алдыңғы жылдың мәні × коэффициент = жаңа мән &nbsp;|&nbsp; 5 компанияның жаңа мәндерін қосу = жалпы қоржын</div>
+      </div>
+      <div class="step-box mt12" style="background:#f5f3ff;border-color:#7c3aed;">
+        <div class="step-num" style="background:#7c3aed;">Есептеп жаз</div>
+        <div class="step-text">5 компанияның жаңа мәндерін қосып, <strong>${yr} жылдың жалпы портфель сомасын</strong> жазыңыз:</div>
+      </div>
+      <div class="btn-row mt12" style="align-items:center;">
+        <input type="number" id="g2-inp-${yr}" placeholder="Жалпы портфель сомасы (тг)"
+          style="padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:0.9rem;flex:1;min-width:0;">
+        <button class="btn btn-primary" style="background:#7c3aed;" onclick="g2_checkAndNext2(${yr})">${isLast ? '⚡ Нәтижені тексер' : '✓ Тексеру →'}</button>
+      </div>
+      <div id="g2-err-${yr}" style="display:none;margin-top:8px;color:#7c3aed;font-size:0.85rem;font-weight:600;padding:8px;background:#f5f3ff;border-radius:6px;"></div>
+    </div>`;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function g2_calcFinal2() {
+  const INIT = 200000;
+  let totalFinal = 0;
+  const rows = [];
+  g2_categories.forEach(cat => {
+    const comp = cat.companies.find(c => c.key === g2_selected[cat.id]);
+    let val = INIT;
+    const vals = comp.years.map(yd => { val = Math.round(val * yd.mult); return val; });
+    totalFinal += val;
+    rows.push({ cat, comp, vals, final: val });
+  });
+
+  const tbody = document.querySelector('#g2-result-table tbody');
+  tbody.innerHTML = '';
+  rows.forEach(r => {
+    const diff = r.final - INIT;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.cat.emoji} <strong>${r.comp.name}</strong></td>
+      <td class="num">${INIT.toLocaleString('kk-KZ')} тг</td>
+      <td class="num">${r.vals[0].toLocaleString('kk-KZ')} тг</td>
+      <td class="num">${r.vals[1].toLocaleString('kk-KZ')} тг</td>
+      <td class="num ${diff>=0?'':'negative'}">${r.vals[2].toLocaleString('kk-KZ')} тг
+        <small style="display:block;font-size:0.72rem;color:${diff>=0?'var(--green)':'var(--red)'};">
+          (${diff>=0?'+':''}${diff.toLocaleString('kk-KZ')} тг)
+        </small>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  const diff = totalFinal - 1000000;
+  const pct  = ((diff / 1000000) * 100).toFixed(1);
+  const isProfit = diff >= 0;
+  document.getElementById('g2-final-num').textContent = totalFinal.toLocaleString('kk-KZ') + ' тг';
+  document.getElementById('g2-result-msg').innerHTML =
+    `${isProfit?'🟢':'🔴'} <strong>Қорытынды:</strong> Асқардың 1 000 000 тг қоржыны 3 жылда <strong>${totalFinal.toLocaleString('kk-KZ')} тг</strong> болды — ${isProfit?'пайда':'шығын'}: <strong>${isProfit?'+':''}${diff.toLocaleString('kk-KZ')} тг (${isProfit?'+':''}${pct}%)</strong>. Диверсификация арқасында нашар компаниялардың шығынын жақсылары жапты.`;
+
+  document.getElementById('g2-result').style.display = 'block';
+  document.getElementById('g2-result').scrollIntoView({ behavior:'smooth', block:'nearest' });
+
+  // Жиынтық вкладканы жаңарту
+  const MAX_BAR = 3000000;
+  const g2pct = Math.max(2, Math.round((totalFinal / MAX_BAR) * 100));
+  document.getElementById('ts-g3-amount').textContent = totalFinal.toLocaleString('kk-KZ') + ' тг';
+  document.getElementById('ts-g3-label').textContent  = isProfit ? 'Байлық өсті (+' + pct + '%)' : 'Шығын (' + pct + '%)';
+  document.getElementById('ts-g3-bar').style.width    = g2pct + '%';
+  document.getElementById('ts-g3-bar').textContent    = totalFinal.toLocaleString('kk-KZ');
+  document.getElementById('ts-g3-bar-val').textContent = totalFinal.toLocaleString('kk-KZ') + ' тг';
+  fbWrite('g3', { amount: totalFinal.toLocaleString('kk-KZ')+' тг', label: isProfit ? 'Байлық өсті (+'+pct+'%)' : 'Шығын ('+pct+'%)', barPct: g2pct, barText: totalFinal.toLocaleString('kk-KZ'), barVal: totalFinal.toLocaleString('kk-KZ')+' тг' });
+}
+
+/* ══ GROUP 3 ══ */
+/* ══ GROUP 3 — Депозит (2022–2025) ══ */
+const g3_years_data = [
+  { yr:2022, inflation:20.3,
+    context:'Ұлттық банк базалық мөлшерлемені бірнеше рет көтерді — депозит пайыздары күрт өсті.',
+    deposits:[
+      {id:'a',bank:'Kaspi Bank',      name:'«Kaspi Депозит»',   type:'Мерзімсіз',typeColor:'#3b82f6',typeBg:'#eff6ff',rate:14.0,desc:'Ақшаны кез келген уақытта алуға және салуға болады'},
+      {id:'b',bank:'Halyk Bank',      name:'«Сенімді»',          type:'Мерзімді', typeColor:'#d97706',typeBg:'#fffbeb',rate:14.5,desc:'Жартылай алу мүмкіндігі бар, бірақ минималды қалдық керек'},
+      {id:'c',bank:'Bank RBK',        name:'«Grand»',             type:'Жинақ',    typeColor:'#059669',typeBg:'#ecfdf5',rate:17.2,desc:'Ақшаны мерзімінен бұрын алуға болмайды — табыс ең жоғары'},
+      {id:'d',bank:'Валюталық депозит',name:'(кез келген банк)', type:'USD',      typeColor:'#6b7280',typeBg:'#f9fafb',rate:1.0, desc:'АҚШ долларымен — қорғаныштық депозит'}
+    ]
+  },
+  { yr:2023, inflation:9.8,
+    context:'Инфляция шыңына жеткен кезең — банктер клиенттер үшін ең жоғары пайыздарды ұсынды.',
+    deposits:[
+      {id:'a',bank:'Kaspi Bank',        name:'«Kaspi Депозит»', type:'Мерзімсіз',typeColor:'#3b82f6',typeBg:'#eff6ff',rate:14.0,desc:'Тұрақтылық символы'},
+      {id:'b',bank:'ForteBank',         name:'«Forte Тұрақты»', type:'Мерзімді', typeColor:'#d97706',typeBg:'#fffbeb',rate:15.5,desc:'Орташа мерзімге тиімді таңдау'},
+      {id:'c',bank:'Банк ЦентрКредит', name:'«Жинақ БЦК»',     type:'Жинақ',    typeColor:'#059669',typeBg:'#ecfdf5',rate:18.3,desc:'Нарықтағы ең жоғары мөлшерлемелердің бірі'},
+      {id:'d',bank:'Halyk Bank',        name:'Долларлық депозит',type:'USD',      typeColor:'#6b7280',typeBg:'#f9fafb',rate:1.0, desc:''}
+    ]
+  },
+  { yr:2024, inflation:8.4,
+    context:'Мөлшерлемелер сәл төмендей бастады, бірақ әлі де жоғары деңгейде қалды.',
+    deposits:[
+      {id:'a',bank:'Kaspi Bank',  name:'«Kaspi Депозит»',   type:'Мерзімсіз',typeColor:'#3b82f6',typeBg:'#eff6ff',rate:14.0,desc:''},
+      {id:'b',bank:'Jusan Bank',  name:'«Jusan Мерзімді»',  type:'Мерзімді', typeColor:'#d97706',typeBg:'#fffbeb',rate:14.7,desc:'Ыңғайлы мобильді қосымша мен тұрақты пайыз'},
+      {id:'c',bank:'Bereke Bank', name:'«Сберегательный»',  type:'Жинақ',    typeColor:'#059669',typeBg:'#ecfdf5',rate:17.5,desc:'Ұзақ мерзімге жинақтаушылар үшін'},
+      {id:'d',bank:'ForteBank',   name:'Валюталық (USD)',    type:'USD',      typeColor:'#6b7280',typeBg:'#f9fafb',rate:1.0, desc:''}
+    ]
+  },
+  { yr:2025, inflation:6.0,
+    context:'Инфляцияның бәсеңдеуіне байланысты Ұлттық банк мөлшерлемені біртіндеп төмендетуде.',
+    deposits:[
+      {id:'a',bank:'Kaspi Bank',        name:'«Kaspi Депозит»', type:'Мерзімсіз',typeColor:'#3b82f6',typeBg:'#eff6ff',rate:13.0,desc:'2025 жылдың ортасынан бастап төмендеу тренді'},
+      {id:'b',bank:'Halyk Bank',        name:'«Оңтайлы»',       type:'Мерзімді', typeColor:'#d97706',typeBg:'#fffbeb',rate:13.5,desc:'Классикалық жинақтау құралы'},
+      {id:'c',bank:'Банк ЦентрКредит', name:'«Рахмет»',         type:'Жинақ',    typeColor:'#059669',typeBg:'#ecfdf5',rate:15.0,desc:'Қазіргі таңдағы ең жоғары көрсеткіштердің бірі'},
+      {id:'d',bank:'Еуразиялық Банк',  name:'Валюталық (USD)',   type:'USD',      typeColor:'#6b7280',typeBg:'#f9fafb',rate:1.0, desc:''}
+    ]
+  }
+];
+
+let g3_nominals   = {};
+let g3_reals      = {};
+let g3_chosen_dep = {};
+
+function g3_init() {
+  g3_nominals = {};
+  g3_reals    = {};
+  g3_chosen_dep = {};
+  [2022,2023,2024,2025].forEach(y => {
+    const el = document.getElementById('g3-year-' + y);
+    if (el) { el.innerHTML = ''; el.style.display = 'none'; }
+  });
+  const r = document.getElementById('g3-result');
+  if (r) { r.innerHTML = ''; r.style.display = 'none'; }
+  g3_buildYearCard(2022);
+}
+
+function g3_buildYearCard(yr) {
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const prevBal = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+  const isLast  = yr === 2025;
+  const el = document.getElementById('g3-year-' + yr);
+
+  const depsHtml = yrData.deposits.map(d => `
+    <div id="g3-dep-${yr}-${d.id}"
+         style="border:2px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;"
+         onclick="g3_selectDeposit(${yr},'${d.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div>
+          <div style="font-weight:700;font-size:0.92rem;">${d.bank}</div>
+          <div style="font-size:0.78rem;color:var(--muted);">${d.name}</div>
+        </div>
+        <span style="background:${d.typeBg};color:${d.typeColor};padding:2px 9px;border-radius:20px;font-size:0.72rem;font-weight:700;white-space:nowrap;">${d.type}</span>
+      </div>
+      <div style="font-size:1.5rem;font-weight:800;color:${d.typeColor};">${d.rate}%</div>
+      ${d.desc ? `<div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">${d.desc}</div>` : ''}
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="card" style="border-top:4px solid #059669;">
+      <div class="card-title">📅 ${yr} жыл &nbsp;<span style="font-size:0.75rem;font-weight:400;color:var(--muted);">Инфляция: <strong style="color:#ea580c;">${yrData.inflation}%</strong></span></div>
+      <div class="step-box" style="background:#ecfdf5;border-color:#059669;margin-bottom:12px;">
+        <div class="step-num" style="background:#059669;">Жағдай</div>
+        <div class="step-text">${yrData.context}</div>
+      </div>
+      <div style="margin-bottom:10px;font-size:0.85rem;color:var(--muted);">
+        Ағымдағы сома: <strong style="color:var(--text);font-size:1rem;">${prevBal.toLocaleString('kk-KZ')} тг</strong>
+      </div>
+      <div style="font-weight:600;margin-bottom:10px;">Қай депозитке саласыз?</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:16px;">
+        ${depsHtml}
+      </div>
+
+      <div id="g3-hint-${yr}" style="display:none;">
+        <!-- STEP A: Nominal -->
+        <div class="step-box mt12" style="background:#eff6ff;border-color:#3b82f6;">
+          <div class="step-num" style="background:#3b82f6;">1-қадам: Номинал</div>
+          <div class="step-text" id="g3-hint-text-${yr}"></div>
+        </div>
+        <div class="btn-row mt12" style="align-items:center;">
+          <input type="number" id="g3-inp-nom-${yr}" placeholder="Жыл соңындағы номинал сома (тг)"
+            style="padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:0.9rem;flex:1;min-width:0;">
+          <button class="btn btn-green" onclick="g3_checkNominal(${yr})">✓ Тексеру</button>
+        </div>
+        <div id="g3-err-nom-${yr}" style="display:none;margin-top:8px;color:var(--red);font-size:0.85rem;font-weight:600;padding:8px;background:#fef2f2;border-radius:6px;"></div>
+
+        <!-- STEP B: Inflation (hidden until nominal confirmed) -->
+        <div id="g3-section-b-${yr}" style="display:none;margin-top:16px;">
+          <div id="g3-nom-badge-${yr}"></div>
+          <div class="step-box mt12" style="background:#fff7ed;border-color:#f97316;">
+            <div class="step-num" style="background:#f97316;">2-қадам: Инфляция есебі</div>
+            <div class="step-text" id="g3-inflation-hint-${yr}"></div>
+          </div>
+          <div class="btn-row mt12" style="align-items:center;">
+            <input type="number" id="g3-inp-real-${yr}" placeholder="Нақты сатып алу қабілеті (тг)"
+              style="padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:0.9rem;flex:1;min-width:0;">
+            <button class="btn btn-green" onclick="g3_checkInflation(${yr})">${isLast ? '⚡ Нәтижені тексер' : '✓ Тексеру →'}</button>
+          </div>
+          <div id="g3-err-real-${yr}" style="display:none;margin-top:8px;color:var(--red);font-size:0.85rem;font-weight:600;padding:8px;background:#fef2f2;border-radius:6px;"></div>
+        </div>
+
+        <div id="g3-yr-result-${yr}" style="display:none;"></div>
+      </div>
+    </div>
+  `;
+  el.style.display = 'block';
+  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+}
+
+function g3_selectDeposit(yr, id) {
+  g3_chosen_dep[yr] = id;
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const dep     = yrData.deposits.find(d => d.id === id);
+  const prevBal = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+
+  yrData.deposits.forEach(d => {
+    const c = document.getElementById('g3-dep-' + yr + '-' + d.id);
+    if (!c) return;
+    const sel = d.id === id;
+    c.style.borderColor = sel ? dep.typeColor : 'var(--border)';
+    c.style.background  = sel ? dep.typeBg    : '';
+    c.style.opacity     = sel ? '1' : '0.5';
+  });
+
+  const mult = 1 + dep.rate / 100;
+  document.getElementById('g3-hint-text-' + yr).innerHTML =
+    `Формула: <strong>${prevBal.toLocaleString('kk-KZ')} тг × (1 + ${dep.rate}/100) = ${prevBal.toLocaleString('kk-KZ')} × ${mult} = ?</strong>`;
+  document.getElementById('g3-hint-' + yr).style.display = 'block';
+}
+
+function g3_checkNominal(yr) {
+  const chosen = g3_chosen_dep[yr];
+  if (!chosen) return;
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const dep     = yrData.deposits.find(d => d.id === chosen);
+  const prevBal = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+  const correct = Math.round(prevBal * (1 + dep.rate / 100));
+
+  const inp   = document.getElementById('g3-inp-nom-' + yr);
+  const errEl = document.getElementById('g3-err-nom-' + yr);
+  const raw   = inp.value.replace(/[\s, ]/g, '');
+  const val   = parseInt(raw, 10);
+  const tol   = Math.max(correct * 0.05, 10000);
+
+  if (isNaN(val) || val <= 0) {
+    errEl.innerHTML = `❌ Оң сан жазыңыз. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g3_proceedNominal(${yr})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block'; return;
+  }
+  if (Math.abs(val - correct) > tol) {
+    errEl.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g3_proceedNominal(${yr})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block'; inp.style.borderColor = 'var(--red)'; return;
+  }
+  errEl.style.display = 'none'; inp.style.borderColor = 'var(--green)';
+  g3_nominals[yr] = correct;
+  g3_showInflationStep(yr, correct, yrData, dep);
+}
+
+function g3_proceedNominal(yr) {
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const dep     = yrData.deposits.find(d => d.id === g3_chosen_dep[yr]);
+  const prevBal = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+  const correct = Math.round(prevBal * (1 + dep.rate / 100));
+  g3_nominals[yr] = correct;
+  const inp = document.getElementById('g3-inp-nom-' + yr);
+  inp.value = correct; inp.style.borderColor = 'var(--green)';
+  document.getElementById('g3-err-nom-' + yr).style.display = 'none';
+  g3_showInflationStep(yr, correct, yrData, dep);
+}
+
+function g3_showInflationStep(yr, nominal, yrData, dep) {
+  const inflMult = 1 + yrData.inflation / 100;
+  document.getElementById('g3-nom-badge-' + yr).innerHTML =
+    `<div style="padding:8px 12px;background:#dcfce7;border-radius:8px;font-size:0.85rem;font-weight:700;color:#059669;margin-bottom:8px;">
+       ✅ Номинал: ${nominal.toLocaleString('kk-KZ')} тг (+${dep.rate}%)
+     </div>`;
+  document.getElementById('g3-inflation-hint-' + yr).innerHTML =
+    `Нақты сатып алу қабілеті: <strong>${nominal.toLocaleString('kk-KZ')} ÷ (1 + ${yrData.inflation}/100) = ${nominal.toLocaleString('kk-KZ')} ÷ ${inflMult} = ?</strong>`;
+  document.getElementById('g3-section-b-' + yr).style.display = 'block';
+}
+
+function g3_checkInflation(yr) {
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const nominal = g3_nominals[yr];
+  const correct = Math.round(nominal / (1 + yrData.inflation / 100));
+
+  const inp   = document.getElementById('g3-inp-real-' + yr);
+  const errEl = document.getElementById('g3-err-real-' + yr);
+  const raw   = inp.value.replace(/[\s, ]/g, '');
+  const val   = parseInt(raw, 10);
+  const tol   = Math.max(correct * 0.05, 10000);
+
+  if (isNaN(val) || val <= 0) {
+    errEl.innerHTML = `❌ Оң сан жазыңыз. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g3_proceedInflation(${yr})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block'; return;
+  }
+  if (Math.abs(val - correct) > tol) {
+    errEl.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g3_proceedInflation(${yr})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block'; inp.style.borderColor = 'var(--red)'; return;
+  }
+  errEl.style.display = 'none'; inp.style.borderColor = 'var(--green)';
+  g3_showYearResult(yr, nominal, correct, yrData, g3_years_data.find(y=>y.yr===yr).deposits.find(d=>d.id===g3_chosen_dep[yr]));
+}
+
+function g3_proceedInflation(yr) {
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const nominal = g3_nominals[yr];
+  const correct = Math.round(nominal / (1 + yrData.inflation / 100));
+  const dep     = yrData.deposits.find(d => d.id === g3_chosen_dep[yr]);
+  const inp = document.getElementById('g3-inp-real-' + yr);
+  inp.value = correct; inp.style.borderColor = 'var(--green)';
+  document.getElementById('g3-err-real-' + yr).style.display = 'none';
+  g3_showYearResult(yr, nominal, correct, yrData, dep);
+}
+
+function g3_showYearResult(yr, nominal, realVal, yrData, dep) {
+  const prevBal  = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+  const nomGain  = nominal - prevBal;
+  const realGain = realVal - prevBal;
+  const isPos    = realGain >= 0;
+  const resEl    = document.getElementById('g3-yr-result-' + yr);
+  resEl.innerHTML = `
+    <div class="step-box mt12" style="background:#f0fdf4;border-color:#059669;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div>✅ <strong>${yr} жыл соңы — номинал: ${nominal.toLocaleString('kk-KZ')} тг</strong>
+          <span style="color:#059669;">(+${nomGain.toLocaleString('kk-KZ')} тг / +${dep.rate}%)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="color:var(--muted);font-size:0.85rem;">📉 Инфляция ${yrData.inflation}%:</span>
+          <strong style="color:${isPos ? '#059669' : 'var(--red)'};">
+            нақты сатып алу қабілеті = ${realVal.toLocaleString('kk-KZ')} тг
+            (${isPos ? '+' : ''}${realGain.toLocaleString('kk-KZ')} тг)
+          </strong>
+        </div>
+      </div>
+    </div>`;
+  resEl.style.display = 'block';
+  setTimeout(() => {
+    if (yr < 2025) { g3_buildYearCard(yr + 1); } else { g3_calcFinal3(); }
+  }, 800);
+}
+
+function g3_checkAndNext(yr) {
+  const chosen = g3_chosen_dep[yr];
+  const errEl  = document.getElementById('g3-err-' + yr);
+  if (!chosen) {
+    errEl.textContent = '❌ Алдымен депозит таңдаңыз!';
+    errEl.style.display = 'block';
+    return;
+  }
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const dep     = yrData.deposits.find(d => d.id === chosen);
+  const prevBal = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+  const correct = Math.round(prevBal * (1 + dep.rate / 100));
+
+  const inp = document.getElementById('g3-inp-' + yr);
+  const raw = inp.value.replace(/[\s,\u00a0]/g, '');
+  const entered = parseInt(raw, 10);
+
+  if (isNaN(entered) || entered <= 0) {
+    errEl.innerHTML = `❌ Оң сан жазыңыз. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g3_proceed(${yr})" style="margin-left:10px;padding:4px 14px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block';
+    return;
+  }
+  const tolerance = Math.max(correct * 0.05, 50000);
+  if (Math.abs(entered - correct) > tolerance) {
+    errEl.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${correct.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g3_proceed(${yr})" style="margin-left:10px;padding:4px 14px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    errEl.style.display = 'block';
+    inp.style.borderColor = 'var(--red)';
+    return;
+  }
+
+  errEl.style.display = 'none';
+  inp.style.borderColor = 'var(--green)';
+  g3_nominals[yr] = correct;
+
+  const realVal  = Math.round(correct / (1 + yrData.inflation / 100));
+  const nomGain  = correct - prevBal;
+  const realGain = realVal - prevBal;
+  const isPos    = realGain >= 0;
+
+  const resEl = document.getElementById('g3-yr-result-' + yr);
+  resEl.innerHTML = `
+    <div class="step-box mt12" style="background:#f0fdf4;border-color:#059669;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div>✅ <strong>${yr} жыл соңы — номинал: ${correct.toLocaleString('kk-KZ')} тг</strong>
+          <span style="color:#059669;">(+${nomGain.toLocaleString('kk-KZ')} тг / +${dep.rate}%)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="color:var(--muted);font-size:0.85rem;">📉 Инфляция ${yrData.inflation}%:</span>
+          <strong style="color:${isPos ? '#059669' : 'var(--red)'};">
+            нақты сатып алу қабілеті = ${realVal.toLocaleString('kk-KZ')} тг
+            (${isPos ? '+' : ''}${realGain.toLocaleString('kk-KZ')} тг)
+          </strong>
+        </div>
+      </div>
+    </div>
+  `;
+  resEl.style.display = 'block';
+
+  setTimeout(() => {
+    if (yr < 2025) { g3_buildYearCard(yr + 1); } else { g3_calcFinal3(); }
+  }, 800);
+}
+
+function g3_proceed(yr) {
+  const chosen  = g3_chosen_dep[yr];
+  const yrData  = g3_years_data.find(y => y.yr === yr);
+  const dep     = yrData.deposits.find(d => d.id === chosen);
+  const prevBal = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+  const correct = Math.round(prevBal * (1 + dep.rate / 100));
+
+  g3_nominals[yr] = correct;
+  document.getElementById('g3-err-' + yr).style.display = 'none';
+  document.getElementById('g3-inp-' + yr).style.borderColor = 'var(--green)';
+
+  const realVal  = Math.round(correct / (1 + yrData.inflation / 100));
+  const nomGain  = correct - prevBal;
+  const realGain = realVal - prevBal;
+  const isPos    = realGain >= 0;
+  const resEl = document.getElementById('g3-yr-result-' + yr);
+  resEl.innerHTML = `
+    <div class="step-box mt12" style="background:#f0fdf4;border-color:#059669;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div>✅ <strong>${yr} жыл соңы — номинал: ${correct.toLocaleString('kk-KZ')} тг</strong>
+          <span style="color:#059669;">(+${nomGain.toLocaleString('kk-KZ')} тг / +${dep.rate}%)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="color:var(--muted);font-size:0.85rem;">📉 Инфляция ${yrData.inflation}%:</span>
+          <strong style="color:${isPos ? '#059669' : 'var(--red)'};">
+            нақты сатып алу қабілеті = ${realVal.toLocaleString('kk-KZ')} тг
+            (${isPos ? '+' : ''}${realGain.toLocaleString('kk-KZ')} тг)
+          </strong>
+        </div>
+      </div>
+    </div>
+  `;
+  resEl.style.display = 'block';
+  setTimeout(() => {
+    if (yr < 2025) { g3_buildYearCard(yr + 1); } else { g3_calcFinal3(); }
+  }, 800);
+}
+
+function g3_calcFinal3() {
+  const resultEl = document.getElementById('g3-result');
+  const yrs = [2022,2023,2024,2025];
+
+  let rows = '';
+  yrs.forEach(yr => {
+    const yrData = g3_years_data.find(y => y.yr === yr);
+    const dep    = yrData.deposits.find(d => d.id === g3_chosen_dep[yr]);
+    const prev   = yr === 2022 ? 1000000 : g3_nominals[yr - 1];
+    const nom    = g3_nominals[yr];
+    const real   = Math.round(nom / (1 + yrData.inflation / 100));
+    const isPos  = real > prev;
+    rows += `<tr>
+      <td>${yr}</td>
+      <td>${dep.bank}<br><small style="color:var(--muted);">${dep.name} · ${dep.rate}%</small></td>
+      <td>${nom.toLocaleString('kk-KZ')} тг</td>
+      <td style="color:var(--muted);font-size:0.85rem;">${yrData.inflation}%</td>
+      <td style="color:${isPos ? '#059669' : 'var(--red)'};">${real.toLocaleString('kk-KZ')} тг</td>
+    </tr>`;
+  });
+
+  const finalNom  = g3_nominals[2025];
+  const nomGain   = finalNom - 1000000;
+  const nomPct    = ((nomGain / 1000000) * 100).toFixed(1);
+
+  let realFinal = 1000000;
+  yrs.forEach(yr => {
+    const yrData = g3_years_data.find(y => y.yr === yr);
+    const dep    = yrData.deposits.find(d => d.id === g3_chosen_dep[yr]);
+    realFinal = Math.round(realFinal * (1 + dep.rate / 100) / (1 + yrData.inflation / 100));
+  });
+  const realGain = realFinal - 1000000;
+  const realPct  = ((realGain / 1000000) * 100).toFixed(1);
+  const isRealPos = realGain >= 0;
+
+  resultEl.innerHTML = `
+    <div class="card result-box ${isRealPos ? 'ok' : 'bad'}">
+      <div class="result-headline">${isRealPos ? '+' : ''}${realGain.toLocaleString('kk-KZ')} тг нақты өсім</div>
+      <div class="result-label">4 жыл бойы депозит сақтаудың нақты нәтижесі (инфляция есебімен)</div>
+      <table class="year-table" style="margin-top:16px;">
+        <thead><tr><th>Жыл</th><th>Депозит</th><th>Жыл соңы (номинал)</th><th>Инфляция</th><th>Нақты мән</th></tr></thead>
+        <tbody>
+          <tr><td>Бастапқы</td><td>—</td><td>1 000 000 тг</td><td>—</td><td>1 000 000 тг</td></tr>
+          ${rows}
+        </tbody>
+      </table>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div class="step-box" style="background:#eff6ff;border-color:#3b82f6;text-align:center;">
+          <div style="font-size:0.78rem;color:#3b82f6;font-weight:700;">НОМИНАЛ ӨСІМІ</div>
+          <div style="font-size:1.4rem;font-weight:800;color:#3b82f6;">${nomGain >= 0 ? '+' : ''}${nomPct}%</div>
+          <div style="font-size:0.85rem;">${finalNom.toLocaleString('kk-KZ')} тг</div>
+        </div>
+        <div class="step-box" style="background:${isRealPos ? '#ecfdf5' : '#fef2f2'};border-color:${isRealPos ? '#059669' : 'var(--red)'};text-align:center;">
+          <div style="font-size:0.78rem;color:${isRealPos ? '#059669' : 'var(--red)'};font-weight:700;">НАҚТЫ ӨСІМ (инфляция есебімен)</div>
+          <div style="font-size:1.4rem;font-weight:800;color:${isRealPos ? '#059669' : 'var(--red)'};">${isRealPos ? '+' : ''}${realPct}%</div>
+          <div style="font-size:0.85rem;">${realFinal.toLocaleString('kk-KZ')} тг</div>
+        </div>
+      </div>
+      <div class="result-message mt12">
+        🟢 <strong>Қорытынды:</strong> Депозит — қауіпсіз жинақ тәсілі, бірақ инфляциядан жоғары пайыз таңдамасаң, ақшаның нақты құны азаяды. Математикалық дағды — дұрыс банк таңдаудың кілті.
+      </div>
+    </div>
+  `;
+  resultEl.style.display = 'block';
+  setTimeout(() => resultEl.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+
+  // Жиынтық вкладканы жаңарту
+  const g3MAX = 3000000;
+  const g3pct = Math.max(2, Math.round((finalNom / g3MAX) * 100));
+  const g3LabelText = isRealPos ? 'Нақты өсім (+' + realPct + '%)' : 'Нақты шығын (' + realPct + '%)';
+  document.getElementById('ts-g2-amount').textContent = finalNom.toLocaleString('kk-KZ') + ' тг';
+  document.getElementById('ts-g2-label').textContent  = g3LabelText;
+  document.getElementById('ts-g2-bar').style.width    = g3pct + '%';
+  document.getElementById('ts-g2-bar').textContent    = finalNom.toLocaleString('kk-KZ');
+  document.getElementById('ts-g2-bar-val').textContent = finalNom.toLocaleString('kk-KZ') + ' тг';
+  fbWrite('g2', { amount: finalNom.toLocaleString('kk-KZ')+' тг', label: g3LabelText, barPct: g3pct, barText: finalNom.toLocaleString('kk-KZ'), barVal: finalNom.toLocaleString('kk-KZ')+' тг' });
+}
+
+/* ══ GROUP 4 ══ */
+const g4_dep_opts = [
+  { id:'kaspi', name:'Kaspi Депозит', rate:14, color:'#3b82f6', bg:'#eff6ff' },
+  { id:'bck',   name:'БЦК Жинақ',    rate:17, color:'#7c3aed', bg:'#f5f3ff' }
+];
+const g4_inv_opts = [
+  { id:'high',   emoji:'📈', name:'Жоғары тәуекел',  color:'#dc2626', bg:'#fef2f2',
+    rates:[60,-35,90,45],
+    news:['AI чиптеріне ерте кіру: +60%!',
+          '⚠️ Нарық күйреді: портфель 35% жоғалды!',
+          '🚀 AI серпілісі: нарық рекорд деңгейге жетті (+90%)!',
+          'Нарық шоғырлануы жалғасты: +45%'] },
+  { id:'stable', emoji:'🏛️', name:'Тұрақты (ETF)',   color:'#059669', bg:'#ecfdf5',
+    rates:[8,11,13,10],
+    news:['Индекс тұрақты өсті: +8%',
+          'Нарық тұрақты: +11%',
+          'Жақсы жыл: +13%',
+          'Тұрақты өсім жалғасты: +10%'] },
+  { id:'bad',    emoji:'📉', name:'Peloton (PTON)',   color:'#9ca3af', bg:'#f9fafb',
+    rates:[-40,-20,15,40],
+    news:['😱 Пандемия аяқталды: үй тренажерына сұраныс күрт түсті, акция −40%!',
+          '⚠️ Қаржылық шығын жалғасты: мыңдаған жұмыскер жұмыссыз қалды, −20%',
+          'Lululemon серіктестігі жарияланды: аздаған қалпына келу +15%',
+          'Ребрендинг нәтиже берді, жаңа нарыққа кіру: +40%'] }
+];
+const g4_years       = [2022,2023,2024,2025];
+const g4_dep_contrib = [300000, 300000, 443032, 570000];
+const g4_inv_contrib = [300000, 300000, 443032, 570000];
+
+let g4_sel_dep = null;
+let g4_sel_inv = null;
+let g4_loan_bal = {};
+let g4_dep_bal  = {};
+let g4_inv_bal  = {};
+
+function g4_selectDep(id) {
+  g4_sel_dep = id;
+  g4_dep_opts.forEach(d => {
+    const el = document.getElementById('g4-dep-' + d.id);
+    el.style.borderColor = d.id === id ? d.color : 'var(--border)';
+    el.style.background  = d.id === id ? d.bg    : '#fff';
+    el.style.opacity     = d.id === id ? '1'     : '0.5';
+  });
+  g4_updateStartBtn();
+}
+
+function g4_selectInv(id) {
+  g4_sel_inv = id;
+  g4_inv_opts.forEach(d => {
+    const el = document.getElementById('g4-inv-' + d.id);
+    el.style.borderColor = d.id === id ? d.color : 'var(--border)';
+    el.style.background  = d.id === id ? d.bg    : '#fff';
+    el.style.opacity     = d.id === id ? '1'     : '0.5';
+  });
+  g4_updateStartBtn();
+}
+
+function g4_updateStartBtn() {
+  const btn = document.getElementById('g4-start-btn');
+  const ok  = g4_sel_dep && g4_sel_inv;
+  btn.disabled      = !ok;
+  btn.style.opacity = ok ? '1' : '0.45';
+}
+
+function g4_startGame() {
+  g4_loan_bal = {};
+  g4_dep_bal  = {};
+  g4_inv_bal  = {};
+  g4_years.forEach(y => {
+    const el = document.getElementById('g4-year-' + y);
+    if (el) el.innerHTML = '';
+  });
+  const r = document.getElementById('g4-result');
+  if (r) r.innerHTML = '';
+  g4_buildYearCard(2022);
+}
+
+function g4_calcCorrect(yr) {
+  const dep = g4_dep_opts.find(d => d.id === g4_sel_dep);
+  const inv = g4_inv_opts.find(d => d.id === g4_sel_inv);
+  const yi  = g4_years.indexOf(yr);
+
+  let loanCorrect;
+  if (yr === 2022)      loanCorrect = Math.round(1000000 * 1.18 - 540000); // 640 000
+  else if (yr === 2023) loanCorrect = Math.round(g4_loan_bal[2022] * 1.18 - 540000); // 215 200
+  else                  loanCorrect = 0;
+
+  const depPrev    = yr === 2022 ? 0 : g4_dep_bal[yr - 1];
+  const depCorrect = Math.round((depPrev + g4_dep_contrib[yi]) * (1 + dep.rate / 100));
+
+  const invPrev    = yr === 2022 ? 0 : g4_inv_bal[yr - 1];
+  const invCorrect = Math.round((invPrev + g4_inv_contrib[yi]) * (1 + inv.rates[yi] / 100));
+
+  return { loanCorrect, depCorrect, invCorrect };
+}
+
+function g4_buildYearCard(yr) {
+  const yi      = g4_years.indexOf(yr);
+  const dep     = g4_dep_opts.find(d => d.id === g4_sel_dep);
+  const inv     = g4_inv_opts.find(d => d.id === g4_sel_inv);
+  const isLast  = yr === 2025;
+  const loanFixed = yr >= 2024;
+
+  const depPrev    = yr === 2022 ? 0 : g4_dep_bal[yr - 1];
+  const invPrev    = yr === 2022 ? 0 : g4_inv_bal[yr - 1];
+  const loanPrev   = yr === 2022 ? 1000000 : g4_loan_bal[yr - 1];
+  const depContrib = g4_dep_contrib[yi];
+  const invContrib = g4_inv_contrib[yi];
+  const invRatePct = inv.rates[yi];
+  const invSign    = invRatePct >= 0 ? '+' : '';
+
+  const contexts = {
+    2022: 'Нұрлан стратегиясын бастады. Ай сайын бюджетін 50/30/20 бойынша бөледі.',
+    2023: 'Екінші жыл. Несие азайып жатыр, жинақ өсуде.',
+    2024: '🎉 Бұл жылы несие толық өтеледі! Босаған 45 000 тг/ай (286 064 тг) депозит пен инвестицияға 143 032 тгден қосылды.',
+    2025: 'Соңғы жыл. Несие жоқ — 45 000 тг/ай (540 000 тг/жыл) бүтіндей жинаққа!'
+  };
+
+  let loanHtml;
+  if (!loanFixed) {
+    const loanMult = loanPrev === 1000000 ? '1 000 000 × 1.18 − 540 000' : `${loanPrev.toLocaleString('kk-KZ')} × 1.18 − 540 000`;
+    loanHtml = `
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:8px;">${loanMult} = ?</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input type="number" id="g4-inp-loan-${yr}" placeholder="Қалған несие (тг)"
+          style="flex:1;min-width:0;padding:8px 12px;border:2px solid #fecaca;border-radius:8px;font-size:0.9rem;">
+      </div>`;
+  } else {
+    const loanHint = yr === 2024
+      ? '215 200 × 1.18 = 253 936 &lt; 540 000 жылдық төлем → несие өтелді!'
+      : 'Алдыңғы жылда өтелген — 0 тг';
+    loanHtml = `
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:6px;">${loanHint}</div>
+      <div style="color:#059669;font-weight:700;font-size:0.9rem;">✅ Несие өтелді → 0 тг</div>
+      <input type="number" id="g4-inp-loan-${yr}" value="0" style="display:none;">`;
+  }
+
+  const depTotal = depPrev + depContrib;
+  const depHint  = `(${depPrev > 0 ? depPrev.toLocaleString('kk-KZ') + ' + ' : ''}${depContrib.toLocaleString('kk-KZ')}) × ${(1 + dep.rate/100).toFixed(2)} = ?`;
+
+  const invTotal = invPrev + invContrib;
+  const invFactor = (1 + invRatePct / 100).toFixed(2);
+  const invHint  = `(${invPrev > 0 ? invPrev.toLocaleString('kk-KZ') + ' + ' : ''}${invContrib.toLocaleString('kk-KZ')}) × ${invFactor} = ?${invRatePct < 0 ? ' ⚠️' : ''}`;
+
+  const el = document.getElementById('g4-year-' + yr);
+  el.innerHTML = `
+    <div class="card" style="margin-top:16px;border-top:4px solid var(--gold);">
+      <div class="card-title">📅 ${yr} жыл &nbsp;<span style="font-size:0.75rem;font-weight:400;color:var(--muted);">${yi + 1}-жыл</span></div>
+      <div class="step-box" style="background:#fffbeb;border-color:var(--gold);margin-bottom:12px;">
+        <div class="step-num" style="background:var(--gold);">Жағдай</div>
+        <div class="step-text">${contexts[yr]}</div>
+      </div>
+
+      <div style="padding:8px 12px;background:${invRatePct < 0 ? '#fef2f2' : '#f0fdf4'};border-radius:8px;border-left:3px solid ${inv.color};margin-bottom:14px;font-size:0.85rem;">
+        ${inv.emoji} <strong>Инвестиция жаңалығы (${invSign}${invRatePct}%):</strong> ${inv.news[yi]}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <!-- Несие -->
+        <div style="padding:12px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;">
+          <div style="font-size:0.82rem;font-weight:700;color:#dc2626;margin-bottom:6px;">🏦 Қалған несие қарызы</div>
+          ${loanHtml}
+          <div id="g4-err-loan-${yr}" style="display:none;margin-top:6px;color:var(--red);font-size:0.82rem;font-weight:600;padding:6px;background:#fef2f2;border-radius:6px;"></div>
+        </div>
+
+        <!-- Депозит -->
+        <div style="padding:12px;border-radius:8px;background:${dep.bg};border:1px solid ${dep.color}44;">
+          <div style="font-size:0.82rem;font-weight:700;color:${dep.color};margin-bottom:4px;">💰 ${dep.name} балансы (+${dep.rate}%)</div>
+          <div style="font-size:0.82rem;color:var(--muted);margin-bottom:8px;">${depHint}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="number" id="g4-inp-dep-${yr}" placeholder="Депозит балансы (тг)"
+              style="flex:1;min-width:0;padding:8px 12px;border:2px solid ${dep.color};border-radius:8px;font-size:0.9rem;">
+          </div>
+          <div id="g4-err-dep-${yr}" style="display:none;margin-top:6px;color:var(--red);font-size:0.82rem;font-weight:600;padding:6px;background:#fef2f2;border-radius:6px;"></div>
+        </div>
+
+        <!-- Инвестиция -->
+        <div style="padding:12px;border-radius:8px;background:${inv.bg};border:1px solid ${inv.color}44;">
+          <div style="font-size:0.82rem;font-weight:700;color:${inv.color};margin-bottom:4px;">${inv.emoji} ${inv.name} (${invSign}${invRatePct}%)</div>
+          <div style="font-size:0.82rem;color:var(--muted);margin-bottom:8px;">${invHint}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="number" id="g4-inp-inv-${yr}" placeholder="Инвестиция мәні (тг)"
+              style="flex:1;min-width:0;padding:8px 12px;border:2px solid ${inv.color};border-radius:8px;font-size:0.9rem;">
+          </div>
+          <div id="g4-err-inv-${yr}" style="display:none;margin-top:6px;color:var(--red);font-size:0.82rem;font-weight:600;padding:6px;background:#fef2f2;border-radius:6px;"></div>
+        </div>
+
+      </div>
+
+      <div class="btn-row mt12">
+        <button class="btn btn-gold" onclick="g4_checkYear(${yr})">${isLast ? '⚡ Нәтижені тексер' : '✓ Тексеру →'}</button>
+      </div>
+      <div id="g4-yr-result-${yr}" style="display:none;margin-top:12px;"></div>
+    </div>
+  `;
+  el.style.display = 'block';
+  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+}
+
+function g4_checkYear(yr) {
+  const { loanCorrect, depCorrect, invCorrect } = g4_calcCorrect(yr);
+  const loanFixed = yr >= 2024;
+  let hasError = false;
+
+  if (!loanFixed) {
+    const loanInp = document.getElementById('g4-inp-loan-' + yr);
+    const loanErr = document.getElementById('g4-err-loan-' + yr);
+    const loanVal = parseInt(loanInp.value.replace(/[\s, ]/g,''), 10);
+    const tol = Math.max(loanCorrect * 0.05, 8000);
+    if (isNaN(loanVal) || loanVal < 0) {
+      loanErr.innerHTML = `❌ Оң сан жазыңыз. Дұрыс: <strong>${loanCorrect.toLocaleString('kk-KZ')} тг</strong>
+        <button onclick="g4_proceed('loan',${yr},${loanCorrect})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+      loanErr.style.display = 'block'; hasError = true;
+    } else if (Math.abs(loanVal - loanCorrect) > tol) {
+      loanErr.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${loanCorrect.toLocaleString('kk-KZ')} тг</strong>
+        <button onclick="g4_proceed('loan',${yr},${loanCorrect})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+      loanErr.style.display = 'block'; loanInp.style.borderColor = 'var(--red)'; hasError = true;
+    } else {
+      loanErr.style.display = 'none'; loanInp.style.borderColor = 'var(--green)';
+    }
+  }
+
+  const depInp = document.getElementById('g4-inp-dep-' + yr);
+  const depErr = document.getElementById('g4-err-dep-' + yr);
+  const depVal = parseInt(depInp.value.replace(/[\s, ]/g,''), 10);
+  const depTol = Math.max(depCorrect * 0.05, 12000);
+  if (isNaN(depVal) || depVal <= 0) {
+    depErr.innerHTML = `❌ Оң сан жазыңыз. Дұрыс: <strong>${depCorrect.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g4_proceed('dep',${yr},${depCorrect})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    depErr.style.display = 'block'; hasError = true;
+  } else if (Math.abs(depVal - depCorrect) > depTol) {
+    depErr.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${depCorrect.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g4_proceed('dep',${yr},${depCorrect})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    depErr.style.display = 'block'; depInp.style.borderColor = 'var(--red)'; hasError = true;
+  } else {
+    depErr.style.display = 'none'; depInp.style.borderColor = 'var(--green)';
+  }
+
+  const invInp = document.getElementById('g4-inp-inv-' + yr);
+  const invErr = document.getElementById('g4-err-inv-' + yr);
+  const invVal = parseInt(invInp.value.replace(/[\s, ]/g,''), 10);
+  const invTol = Math.max(Math.abs(invCorrect) * 0.05, 12000);
+  if (isNaN(invVal)) {
+    invErr.innerHTML = `❌ Сан жазыңыз. Дұрыс: <strong>${invCorrect.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g4_proceed('inv',${yr},${invCorrect})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    invErr.style.display = 'block'; hasError = true;
+  } else if (Math.abs(invVal - invCorrect) > invTol) {
+    invErr.innerHTML = `❌ Қате. Дұрыс жауап: <strong>${invCorrect.toLocaleString('kk-KZ')} тг</strong>
+      <button onclick="g4_proceed('inv',${yr},${invCorrect})" style="margin-left:8px;padding:3px 10px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">Жалғастыру →</button>`;
+    invErr.style.display = 'block'; invInp.style.borderColor = 'var(--red)'; hasError = true;
+  } else {
+    invErr.style.display = 'none'; invInp.style.borderColor = 'var(--green)';
+  }
+
+  if (!hasError) g4_saveAndAdvance(yr, loanCorrect, depCorrect, invCorrect);
+}
+
+function g4_proceed(field, yr, val) {
+  document.getElementById('g4-err-' + field + '-' + yr).style.display = 'none';
+  const inp = document.getElementById('g4-inp-' + field + '-' + yr);
+  if (inp) { inp.value = val; inp.style.borderColor = 'var(--green)'; }
+}
+
+function g4_saveAndAdvance(yr, loan, dep, inv) {
+  g4_loan_bal[yr] = loan;
+  g4_dep_bal[yr]  = dep;
+  g4_inv_bal[yr]  = inv;
+
+  const yi         = g4_years.indexOf(yr);
+  const net        = dep + inv - loan;
+  const isPos      = net >= 0;
+  const dep_o      = g4_dep_opts.find(d => d.id === g4_sel_dep);
+  const inv_o      = g4_inv_opts.find(d => d.id === g4_sel_inv);
+  const loanFixed  = yr >= 2024;
+  const depContrib = g4_dep_contrib[yi];
+  const invContrib = g4_inv_contrib[yi];
+  const loanPaid   = loanFixed ? 0 : 540000;
+
+  const loanStatHtml = loanFixed
+    ? `<tr style="border-bottom:1px solid #e5e7eb;">
+        <td style="padding:5px 8px;">💳 Несие</td>
+        <td style="padding:5px 8px;text-align:right;color:#059669;font-weight:700;">Өтелді ✓</td>
+       </tr>`
+    : `<tr style="border-bottom:1px solid #e5e7eb;">
+        <td style="padding:5px 8px;">💳 Несиеге жіберілді (45к × 12)</td>
+        <td style="padding:5px 8px;text-align:right;color:#dc2626;font-weight:700;">−${loanPaid.toLocaleString('kk-KZ')} тг</td>
+       </tr>`;
+
+  const extraNote = yi >= 2
+    ? `<div style="font-size:0.76rem;color:#7c3aed;background:#f5f3ff;padding:5px 8px;border-radius:6px;margin-top:4px;">
+         🎉 Босаған 45к/ай → +${(depContrib - 300000).toLocaleString('kk-KZ')} тг қосымша депозит пен инвестицияға бөлінді
+       </div>`
+    : '';
+
+  const resEl = document.getElementById('g4-yr-result-' + yr);
+  resEl.innerHTML = `
+    <div style="margin-top:12px;">
+      <div style="font-size:0.83rem;font-weight:700;color:var(--muted);margin-bottom:6px;">📋 ${yr} жылы ақша қайда кетті:</div>
+      <table style="width:100%;border-collapse:collapse;font-size:0.82rem;background:#f9fafb;border-radius:8px;overflow:hidden;margin-bottom:4px;">
+        <thead>
+          <tr style="background:#e5e7eb;">
+            <th style="text-align:left;padding:5px 8px;">Бағыт</th>
+            <th style="text-align:right;padding:5px 8px;">Жылдық сома</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${loanStatHtml}
+          <tr style="border-bottom:1px solid #e5e7eb;">
+            <td style="padding:5px 8px;">🏦 Депозитке салынды (25к/ай${yi >= 2 ? ' + босаған үлес' : ''})</td>
+            <td style="padding:5px 8px;text-align:right;color:${dep_o.color};font-weight:700;">+${depContrib.toLocaleString('kk-KZ')} тг</td>
+          </tr>
+          <tr>
+            <td style="padding:5px 8px;">📊 Инвестицияға салынды (25к/ай${yi >= 2 ? ' + босаған үлес' : ''})</td>
+            <td style="padding:5px 8px;text-align:right;color:${inv_o.color};font-weight:700;">+${invContrib.toLocaleString('kk-KZ')} тг</td>
+          </tr>
+        </tbody>
+      </table>
+      ${extraNote}
+
+      <div style="font-size:0.83rem;font-weight:700;color:var(--muted);margin:10px 0 6px;">📊 ${yr} жыл соңындағы жағдай:</div>
+      <div style="padding:12px;background:${isPos ? '#f0fdf4' : '#fef2f2'};border-radius:8px;border-left:4px solid ${isPos ? '#059669' : 'var(--red)'};">
+        <div style="font-weight:700;margin-bottom:8px;">
+          Жалпы табыс:
+          <span style="color:${isPos ? '#059669' : 'var(--red)'};">${isPos ? '+' : ''}${net.toLocaleString('kk-KZ')} тг</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:0.82rem;text-align:center;">
+          <div style="padding:6px;background:#fff;border-radius:6px;border:1px solid #fecaca;">
+            <div style="color:#dc2626;font-weight:700;">Несие</div>
+            <div style="font-weight:800;">${loan === 0 ? '<span style="color:#059669;">0 ✓</span>' : '−' + loan.toLocaleString('kk-KZ')}</div>
+          </div>
+          <div style="padding:6px;background:#fff;border-radius:6px;border:1px solid ${dep_o.color}55;">
+            <div style="color:${dep_o.color};font-weight:700;">Депозит</div>
+            <div style="font-weight:800;">${dep.toLocaleString('kk-KZ')}</div>
+          </div>
+          <div style="padding:6px;background:#fff;border-radius:6px;border:1px solid ${inv_o.color}55;">
+            <div style="color:${inv_o.color};font-weight:700;">Инвестиция</div>
+            <div style="font-weight:800;">${inv.toLocaleString('kk-KZ')}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  resEl.style.display = 'block';
+  if (yr < 2025) {
+    setTimeout(() => g4_buildYearCard(yr + 1), 800);
+  } else {
+    setTimeout(() => g4_calcFinal4(), 600);
+  }
+}
+
+function g4_calcFinal4() {
+  const container = document.getElementById('g4-yr-result-2025');
+  const dep_o = g4_dep_opts.find(d => d.id === g4_sel_dep);
+  const inv_o = g4_inv_opts.find(d => d.id === g4_sel_inv);
+  const finalDep = g4_dep_bal[2025];
+  const finalInv = g4_inv_bal[2025];
+  const finalNet = finalDep + finalInv;
+  const gain     = finalNet - 1000000;
+  const gainPct  = ((gain / 1000000) * 100).toFixed(1);
+  const isPos    = gain >= 0;
+
+  let rows = '';
+  g4_years.forEach((yr, i) => {
+    const loan = g4_loan_bal[yr] || 0;
+    const dep  = g4_dep_bal[yr]  || 0;
+    const inv  = g4_inv_bal[yr]  || 0;
+    const net  = dep + inv - loan;
+    const rPct = inv_o.rates[i];
+    const rsign = rPct >= 0 ? '+' : '';
+    rows += `<tr>
+      <td><strong>${yr}</strong></td>
+      <td>${loan === 0 ? '<span style="color:#059669;">Өтелді ✓</span>' : '<span style="color:#dc2626;">−' + loan.toLocaleString('kk-KZ') + '</span>'}</td>
+      <td>${dep.toLocaleString('kk-KZ')}</td>
+      <td style="color:${rPct < 0 ? 'var(--red)' : '#059669'};">${inv.toLocaleString('kk-KZ')} <small>(${rsign}${rPct}%)</small></td>
+      <td style="color:${net >= 0 ? '#059669' : 'var(--red)'};font-weight:700;">${net >= 0 ? '+' : ''}${net.toLocaleString('kk-KZ')}</td>
+    </tr>`;
+  });
+
+  const lessons = {
+    high:   '📈 Жоғары тәуекелді инвестиция 2-жылда қорқынышты болды (−35%), бірақ 3-жылдағы +90% барлығын жапты!',
+    stable: '🏛️ Тұрақты ETF — жыл сайын бірдей өсім. Нарық толқынына ілеспейді, бірақ сенімді нәтиже береді!',
+    bad:    '📉 Peloton (PTON) 2 жыл қатарынан түсті. Дегенмен, депозит жинақтың арқасында жалпы табыс оң болып шықты!'
+  };
+
+  // ── Қосымша есептеулер ──
+  const totalDepContrib = g4_dep_contrib.reduce((a,b)=>a+b,0); // 1 613 032
+  const totalInvContrib = g4_inv_contrib.reduce((a,b)=>a+b,0); // 1 613 032
+  const totalInterest   = Math.round(1000000*0.18 + 640000*0.18 + 215200*0.18); // 333 936
+  const depGain         = finalDep - totalDepContrib;
+  const invGain         = finalInv - totalInvContrib;
+  const depGainSign     = depGain >= 0 ? '+' : '';
+  const invGainSign     = invGain >= 0 ? '+' : '';
+
+  // ── Несие timeline ──
+  const loanSteps = [
+    { label:'Бастапқы', val:-1000000, done:false },
+    { label:'2022 соңы', val:-g4_loan_bal[2022], done:false },
+    { label:'2023 соңы', val:-g4_loan_bal[2023], done:false },
+    { label:'2024', val:0, done:true }
+  ];
+  const timelineHtml = loanSteps.map((s, i) => `
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;">
+      <div style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;
+        background:${s.done ? '#dcfce7' : '#fee2e2'};color:${s.done ? '#059669' : '#dc2626'};border:2px solid ${s.done ? '#059669' : '#dc2626'};text-align:center;line-height:1.2;">
+        ${s.done ? '✅' : (s.val/1000).toFixed(0)+'к'}
+      </div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;text-align:center;">${s.label}</div>
+      ${!s.done ? `<div style="font-size:0.7rem;color:#dc2626;font-weight:700;">${s.val.toLocaleString('kk-KZ')} тг</div>` : '<div style="font-size:0.7rem;color:#059669;font-weight:700;">Өтелді!</div>'}
+    </div>
+    ${i < loanSteps.length-1 ? '<div style="flex:0 0 16px;text-align:center;color:var(--muted);font-size:1rem;align-self:center;">→</div>' : ''}
+  `).join('');
+
+  const finalHtml = `
+    <div class="card result-box ${isPos ? 'ok' : 'bad'}">
+      <div class="result-headline">🎯 ${finalNet.toLocaleString('kk-KZ')} тг жалпы табыс</div>
+      <div class="result-label">4 жыл соңы · несие өтелді · жинақ жиналды</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px;">
+        <span style="padding:4px 10px;border-radius:12px;font-size:0.8rem;font-weight:700;background:${dep_o.bg};color:${dep_o.color};">🏦 ${dep_o.name} (${dep_o.rate}%)</span>
+        <span style="padding:4px 10px;border-radius:12px;font-size:0.8rem;font-weight:700;background:${inv_o.bg};color:${inv_o.color};">${inv_o.emoji} ${inv_o.name}</span>
+      </div>
+
+      <!-- A) Несие жолы: timeline -->
+      <div style="font-size:0.83rem;font-weight:700;margin-bottom:8px;">📉 Несие 1 000 000 тг-дан нөлге дейін:</div>
+      <div style="display:flex;align-items:flex-start;gap:0;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;">
+        ${timelineHtml}
+      </div>
+
+      <!-- B) 4 негізгі сан -->
+      <div style="font-size:0.83rem;font-weight:700;margin-bottom:8px;">📊 4 жылдың негізгі сандары:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+        <div style="padding:12px;border-radius:10px;background:#fef2f2;border:1px solid #fca5a5;text-align:center;">
+          <div style="font-size:0.75rem;color:#dc2626;font-weight:700;">🏦 Банкке пайыз берілді</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#dc2626;">${totalInterest.toLocaleString('kk-KZ')} тг</div>
+          <div style="font-size:0.72rem;color:var(--muted);">несие бағасы (18% × 3 жыл)</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;text-align:center;">
+          <div style="font-size:0.75rem;color:#92400e;font-weight:700;">💰 Жалпы жинаққа салынды</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#92400e;">${(totalDepContrib+totalInvContrib).toLocaleString('kk-KZ')} тг</div>
+          <div style="font-size:0.72rem;color:var(--muted);">4 жыл бойы 50к/ай + босаған үлес</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:${dep_o.bg};border:1px solid ${dep_o.color}55;text-align:center;">
+          <div style="font-size:0.75rem;color:${dep_o.color};font-weight:700;">📈 Депозиттен табыс</div>
+          <div style="font-size:1.3rem;font-weight:800;color:${dep_o.color};">${depGainSign}${depGain.toLocaleString('kk-KZ')} тг</div>
+          <div style="font-size:0.72rem;color:var(--muted);">${dep_o.name} · ${dep_o.rate}% пайызбен</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:${inv_o.bg};border:1px solid ${inv_o.color}55;text-align:center;">
+          <div style="font-size:0.75rem;color:${inv_o.color};font-weight:700;">📊 Инвестициядан табыс</div>
+          <div style="font-size:1.3rem;font-weight:800;color:${invGain >= 0 ? inv_o.color : '#dc2626'};">${invGainSign}${invGain.toLocaleString('kk-KZ')} тг</div>
+          <div style="font-size:0.72rem;color:var(--muted);">${inv_o.emoji} ${inv_o.name}</div>
+        </div>
+      </div>
+
+      <!-- C) Жыл кестесі -->
+      <div style="font-size:0.83rem;font-weight:700;margin-bottom:8px;">📋 4 жылдың жолы:</div>
+      <div style="overflow-x:auto;margin-bottom:20px;">
+        <table class="year-table" style="min-width:480px;">
+          <thead><tr><th>Жыл</th><th>Несие</th><th>Депозит</th><th>Инвестиция</th><th>Жалпы табыс</th></tr></thead>
+          <tbody>
+            <tr><td>Бастапқы</td><td style="color:#dc2626;">−1 000 000</td><td>0</td><td>0</td><td style="color:var(--red);font-weight:700;">−1 000 000</td></tr>
+            ${rows}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- D) 3 негізгі тірек -->
+      <div style="font-size:0.83rem;font-weight:700;margin-bottom:8px;">🔑 Стратегияның 3 тірегі:</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px;">
+        <div style="padding:12px;border-radius:10px;background:#eff6ff;border:1px solid #93c5fd;text-align:center;">
+          <div style="font-size:1.4rem;">📏</div>
+          <div style="font-weight:700;font-size:0.85rem;margin:4px 0;">Тәртіп</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Ай сайын 50/30/20 ережесін ұстанды, ауытқымады</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:#fef9c3;border:1px solid #fde047;text-align:center;">
+          <div style="font-size:1.4rem;">⏰</div>
+          <div style="font-weight:700;font-size:0.85rem;margin:4px 0;">Уақыт</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Несие 3 жылда өтелді. Банкке барлығы ${totalInterest.toLocaleString('kk-KZ')} тг пайыз берілді</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:#ecfdf5;border:1px solid #6ee7b7;text-align:center;">
+          <div style="font-size:1.4rem;">🔄</div>
+          <div style="font-weight:700;font-size:0.85rem;margin:4px 0;">Бостандық</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Босаған 45к/ай жинаққа бұрылды — байлық жеделдеді</div>
+        </div>
+      </div>
+
+      <!-- E) Инвестиция сабағы -->
+      <div class="result-message mt12" style="margin-bottom:12px;">
+        ${lessons[g4_sel_inv]}
+      </div>
+
+      <!-- F) Қорытынды сөйлем -->
+      <div style="padding:14px 16px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:10px;border-left:4px solid var(--gold);font-size:0.88rem;">
+        🟡 <strong>Негізгі сабақ:</strong> Бастапқыда <span style="color:#dc2626;font-weight:700;">1 000 000 тг қарызда</span> болса да —
+        дұрыс стратегия + математикалық тәртіп = 4 жылда
+        <span style="color:#059669;font-weight:700;">${finalNet.toLocaleString('kk-KZ')} тг таза жинақ.</span>
+        <strong>Тәртіп + уақыт = қаржылық тәуелсіздік.</strong>
+      </div>
+    </div>`;
+  // Батырманы нәтижемен алмастыру
+  const btnRow = document.querySelector('#g4-yr-result-2025 .btn-row');
+  const finalDiv = document.createElement('div');
+  finalDiv.innerHTML = finalHtml;
+  if (btnRow) {
+    btnRow.replaceWith(finalDiv);
+  } else {
+    document.getElementById('g4-result').innerHTML = finalHtml;
+    document.getElementById('g4-result').style.display = 'block';
+  }
+
+  // Жиынтық вкладканы жаңарту
+  const g4MAX = 3000000;
+  const g4pct = Math.max(2, Math.round((finalNet / g4MAX) * 100));
+  const g4LabelText = isPos ? 'Ең жоғары нәтиже! (+' + gainPct + '%)' : 'Шығын (' + gainPct + '%)';
+  document.getElementById('ts-g4-amount').textContent = finalNet.toLocaleString('kk-KZ') + ' тг';
+  document.getElementById('ts-g4-label').textContent  = g4LabelText;
+  document.getElementById('ts-g4-bar').style.width    = g4pct + '%';
+  document.getElementById('ts-g4-bar').textContent    = finalNet.toLocaleString('kk-KZ');
+  document.getElementById('ts-g4-bar-val').textContent = finalNet.toLocaleString('kk-KZ') + ' тг';
+  fbWrite('g4', { amount: finalNet.toLocaleString('kk-KZ')+' тг', label: g4LabelText, barPct: g4pct, barText: finalNet.toLocaleString('kk-KZ'), barVal: finalNet.toLocaleString('kk-KZ')+' тг' });
+}
+
+// Init
+g2_renderCategoryGrid();
+fbListen();
+</script>
+</body>
+</html>
