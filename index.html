@@ -324,6 +324,27 @@
   .lesson-box h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #fbbf24; }
   .lesson-box p  { font-size: 0.9rem; line-height: 1.6; opacity: 0.92; }
 
+  /* ── Defense box ── */
+  .defense-box {
+    background: #fff;
+    border: 1px solid #c7d2fe;
+    border-left: 4px solid #4f46e5;
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-top: 16px;
+  }
+  .defense-box .defense-header { font-size: 0.95rem; font-weight: 700; color: #312e81; margin-bottom: 10px; }
+  .defense-box .defense-thesis {
+    font-style: italic; color: #4338ca; font-weight: 600; font-size: 0.88rem;
+    padding: 10px 12px; background: #eef2ff; border-radius: 8px; margin-bottom: 12px;
+  }
+  .defense-box .defense-section { margin-top: 12px; }
+  .defense-box .defense-label {
+    font-weight: 700; font-size: 0.78rem; color: #4338ca;
+    margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .defense-box p { font-size: 0.85rem; line-height: 1.65; color: #1e293b; margin-top: 6px; }
+
   /* ── Responsive ── */
   @media (max-width: 500px) {
     .portfolio-grid { grid-template-columns: 1fr 1fr; }
@@ -597,6 +618,7 @@
       <h3>🧠 Дидро эффектісінің сабағы</h3>
       <p id="g1-lesson-text">Бір сатып алу тізбекті шығынға алып келеді. Тауардың бағасы емес — <strong>тізбекті ойлау (Дидро эффектісі)</strong> — басты мәселе. Бастапқы 1 000 000 тг 4 жылда қарызға айналды.</p>
     </div>
+    <div id="g1-defense" style="display:none;"></div>
   </div>
 
 </div>
@@ -677,6 +699,7 @@
       <h3>📈 Инвестицияның сабағы</h3>
       <p><strong>Диверсификация — тәуекелді азайту жолы.</strong> Нашар компанияның шығынын жақсысы жапты. Барлық ақшаны бір жерге салу — ең үлкен қате. 5 компания × 200 000 тг — бірі құласа, қалғандары ұстап тұрады.</p>
     </div>
+    <div id="g2-defense" style="display:none;"></div>
   </div>
 
 </div>
@@ -1359,6 +1382,23 @@ function g1_calcFinal() {
     b.emoji + ' <strong>' + b.name + ' жолын таңдай отырып,</strong> бастапқы 1 000 000 тг 4 жылда <strong>−' + finalDebt.toLocaleString('kk-KZ') + ' тг қарызға</strong> айналды. ' +
     'Тауардың бағасы емес — <strong>тізбекті ойлау (Дидро эффектісі)</strong> — басты мәселе. Бір сатып алу келесіні туындатады.';
 
+  const defEl = document.getElementById('g1-defense');
+  defEl.innerHTML = `
+    <div class="defense-box">
+      <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+      <div class="defense-thesis">«Біздің топ — бүгінгі қоғамның айнасы. Біз 4 жыл бойы тек «сатып алу» стратегиясымен жүрдік.»</div>
+      <div class="defense-section">
+        <div class="defense-label">Топтың қорғау сөзі</div>
+        <p>Біз <strong>${b.emoji} ${b.name}</strong> жолын таңдадық. 2022 жылы Айгерімде 1 000 000 теңге болды. Ол жыл сайын ескі телефонын, гаджеттерін сатып, жаңасын алып отырды. Санап отырсаңыз — ескісін сатқан ақша бар, бірақ жаңасының бағасы әрқашан жоғары. Нәтижесінде 4 жыл соңында Айгерім <strong>${finalDebt.toLocaleString('kk-KZ')} теңге</strong> шығынға кетті.</p>
+        <p>Мұндай жағдайды психологтар <strong>Дидро эффектісі</strong> деп атайды. XVIII ғасырда Дени Дидро деген ойшыл бір әдемі халат алды — ол халатқа басқа жиһаздар үйлеспегеннен кейін бүкіл үйін ауыстыра бастады. Бір сатып алу келесіні туындатады. Бүгінгі күні бұл — смартфон, AirPods, Apple Watch... тізбегі.</p>
+      </div>
+      <div class="defense-section">
+        <div class="defense-label">🎓 Оқушыларға берер сабағы</div>
+        <p>Бұл тапсырма арқылы балалар «қалау» (хочу) мен «қажеттіліктің» (надо) аражігін ажыратуды үйренеді. Тұтынушылық несие мен Дидро эффектісі адамды қалай қаржылық тығырыққа тірейтінін оқушылар өз көзімен көреді. Біздің нәтижеміз — қалтадағы нөл және қарыз. Бұл — оқушыға «егер сенің жоспарың болмаса, сен біреудің маркетингтік жоспарының бір бөлігісің» дегенді ұғындырудың ең тиімді жолы.</p>
+      </div>
+    </div>`;
+  defEl.style.display = 'block';
+
   const box = document.getElementById('g1-result');
   box.style.display = 'block';
   box.scrollIntoView({ behavior:'smooth', block:'nearest' });
@@ -1652,6 +1692,26 @@ function g2_calcFinal2() {
   document.getElementById('g2-final-num').textContent = totalFinal.toLocaleString('kk-KZ') + ' тг';
   document.getElementById('g2-result-msg').innerHTML =
     `${isProfit?'🟢':'🔴'} <strong>Қорытынды:</strong> Асқардың 1 000 000 тг қоржыны 3 жылда <strong>${totalFinal.toLocaleString('kk-KZ')} тг</strong> болды — ${isProfit?'пайда':'шығын'}: <strong>${isProfit?'+':''}${diff.toLocaleString('kk-KZ')} тг (${isProfit?'+':''}${pct}%)</strong>. Диверсификация арқасында нашар компаниялардың шығынын жақсылары жапты.`;
+
+  const sorted2 = [...rows].sort((a, b) => b.final - a.final);
+  const bestComp  = sorted2[0].comp.name;
+  const worstComp = sorted2[sorted2.length - 1].comp.name;
+  const g2def = document.getElementById('g2-defense');
+  g2def.innerHTML = `
+    <div class="defense-box">
+      <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+      <div class="defense-thesis">«Инвестиция — бұл лотерея емес, бұл — талдау. Кейбір компаниялардан ұтылдық, бірақ технологиялар бізді алға шығарды. Риск әрқашан бар.»</div>
+      <div class="defense-section">
+        <div class="defense-label">Топтың қорғау сөзі</div>
+        <p>Біз 5 санатқа 200 000 теңгеден бөліп салдық — жалпы 1 000 000 теңге. 4 жылда нәтиже: <strong>${totalFinal.toLocaleString('kk-KZ')} теңге</strong>. Бұл жерде маңыздысы — барлық компания бірдей өскен жоқ. <strong>${bestComp}</strong> күрт өсті, ал <strong>${worstComp}</strong> — түсті. Егер барлық ақшамызды тек бір компанияға салған болсақ — нәтиже мүлдем басқа болар еді.</p>
+        <p>Қазақстанда брокерлік шот ашқан адамдар санаулы. Инвестиция туралы «тек байлар ғана айналысады» деген стереотип бар. Бірақ инвестиция — дұрыс ақпаратпен, дұрыс диверсификациямен жасалса — ақшаны ұзақ мерзімде өсірудің тиімді жолы. Бүгінгі тапсырма арқылы оқушылар: акция дегеніміз не, диверсификация неге керек, деректерді талдап шешім қабылдауды үйренеді.</p>
+      </div>
+      <div class="defense-section">
+        <div class="defense-label">🎓 Оқушыларға берер сабағы</div>
+        <p>Біз балаларға инвестицияның тек «байып кету» емес, үлкен талдау мен тәуекел (риск) екенін үйретеміз. Бір компаниямыз өссе, екіншісі минусқа кетті. Бұл оқушыны эмоцияға берілмей, деректермен жұмыс істеуге, әртараптандыруға (ақшаны бөліп салу) баулиды. Инвестиция туралы ерте жастан білу — баланың болашақта пассивті табыс көзін қалыптастыруына жол ашады.</p>
+      </div>
+    </div>`;
+  g2def.style.display = 'block';
 
   document.getElementById('g2-result').style.display = 'block';
   document.getElementById('g2-result').scrollIntoView({ behavior:'smooth', block:'nearest' });
@@ -2060,6 +2120,10 @@ function g3_calcFinal3() {
   const finalNom  = g3_nominals[2025];
   const nomGain   = finalNom - 1000000;
   const nomPct    = ((nomGain / 1000000) * 100).toFixed(1);
+  const banksUsed = yrs.map(yr => {
+    const yd = g3_years_data.find(y => y.yr === yr);
+    return yd.deposits.find(d => d.id === g3_chosen_dep[yr]).bank;
+  }).filter((v, i, a) => a.indexOf(v) === i).join(', ');
 
   let realFinal = 1000000;
   yrs.forEach(yr => {
@@ -2100,6 +2164,19 @@ function g3_calcFinal3() {
       <div class="lesson-box" style="margin-top:16px;">
         <h3>🏦 Депозиттің сабағы</h3>
         <p><strong>Номинал өсім — шын өсім емес.</strong> Инфляция ${(yrs.reduce((s,yr)=>{const d=g3_years_data.find(y=>y.yr===yr);return s+d.inflation;},0)/4).toFixed(1)}% орта есеппен болды. Депозит пайызы инфляциядан жоғары болса ғана ақшаның нақты құны өседі. <strong>Математикалық дағды — дұрыс банк таңдаудың кілті.</strong></p>
+      </div>
+      <div class="defense-box" style="margin-top:16px;">
+        <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+        <div class="defense-thesis">«Біз ақшаны сақтау мен көбейтудің ең танымал жолын таңдадық. Бірақ бұл жерде пайыздар мен инфляцияны дұрыс есептеу керек екенін түсіндік.»</div>
+        <div class="defense-section">
+          <div class="defense-label">Топтың қорғау сөзі</div>
+          <p>Біз <strong>${banksUsed}</strong> таңдадық. 4 жылда номинал сумма <strong>${finalNom.toLocaleString('kk-KZ')} теңгеге</strong> жетті — яғни <strong>${nomGain >= 0 ? '+' : ''}${nomPct}%</strong> өсім. Сырттай қарасаң — жақсы нәтиже. Бірақ инфляцияны есепке алсаңыз — нақты өсім <strong>${isRealPos ? '+' : ''}${realPct}%</strong> ғана. Бұл дегеніміз: ақша санының өсімі — ақшаның сатып алу қабілетінің өсімі емес.</p>
+          <p>Қазақстанда депозитке ақша салатын адамдар аз. Оның үстіне, бос жатқан ақшаның инфляциядан «жеген» мөлшерін есептей алатындар одан да аз. Бүгінгі тапсырма арқылы оқушылар: пайызды қалай есептеу керек, номинал мен нақты өсімнің айырмасы қандай, депозит шарттарын қалай оқу керек деген іскерлікті алады.</p>
+        </div>
+        <div class="defense-section">
+          <div class="defense-label">🎓 Оқушыларға берер сабағы</div>
+          <p>Номиналды пайыз бен нақты пайданың айырмашылығын есептеу (математикалық дағды) — баланың сыни ойлауын дамытады. Оқушы бос жатқан ақшаның құнсызданатынын және күрделі пайыздың (compound interest) қалай жұмыс істейтінін есептеп үйренеді. Бұл — қаржылық сауаттылықтың әліппесі.</p>
+        </div>
       </div>
     </div>
   `;
@@ -2623,6 +2700,21 @@ function g4_calcFinal4() {
         <p>Бастапқыда <strong>1 000 000 тг қарызда</strong> болса да — тәртіп + уақыт + математика =
         4 жылда <strong>${finalNet.toLocaleString('kk-KZ')} тг таза байлық.</strong>
         Қаржылық сауаттылық — болашаққа инвестиция.</p>
+      </div>
+
+      <!-- H) Қорғау блогы -->
+      <div class="defense-box" style="margin-top:16px;">
+        <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+        <div class="defense-thesis">«Біздің топ — бүгінгі мастер-кластың түйіні. Бізде қарыз болды, бірақ біз 50/30/20 ережесін ұстандық. Тәртіп бәрін жеңді.»</div>
+        <div class="defense-section">
+          <div class="defense-label">Топтың қорғау сөзі</div>
+          <p>Нұрланда бастапқыда 1 000 000 теңге қарыз болды. Айлық жалақысы — 250 000 теңге. Бірақ ол 50/30/20 стратегиясын ұстанды: жалақының 50%-ы міндетті шығын, 30%-ы несие мен тұрмыс, 20%-ы жинақ. 4 жылда не болды? Несие өтелді. Депозиті өсті. Инвестициясы жұмыс жасады. Нәтижесінде — <strong>${finalNet.toLocaleString('kk-KZ')} теңге</strong> таза табыс.</p>
+          <p>Бүгін біз барлық топтың жұмысымен таныстық: тұтынушылық — қарызға алып келеді, депозит — қауіпсіз бірақ шартты дұрыс оқу керек, инвестиция — тәуекелмен бірге жоғары табыс. Ал осының бәрін дұрыс үйлестірген адам — қаржылық тәуелсіздікке жете алады. Осыны қарап отырған оқушылар бұл стратегияны мектеп қабырғасынан бастап бойларына сіңіре алса — 10–15 жылдан кейін бізде қаржылық сауатты ұрпақ болады.</p>
+        </div>
+        <div class="defense-section">
+          <div class="defense-label">🎓 Оқушыларға берер сабағы</div>
+          <p>Біз балаларға «қанша тапқаның емес, қаншасын сақтап, қалай басқарғаның маңызды» деген басты қағиданы көрсетеміз. Қарызды өтей отырып, депозит пен инвестицияны қатар алып жүру — нақты математикалық есеп пен темірдей тәртіпті қажет етеді. Егер оқушы мектеп қабырғасынан осы модельді меңгерсе, «кредитке батқан ел» статистикасы болашақта түбегейлі өзгереді. Бұл білім — баланың үлкен өмірдегі қауіпсіздік белдігі.</p>
+        </div>
       </div>
     </div>`;
   // Батырманы нәтижемен алмастыру
