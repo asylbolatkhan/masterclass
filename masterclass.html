@@ -520,7 +520,7 @@
         <ol style="margin:0 0 0 18px;line-height:1.9;font-size:0.88rem;">
           <li>Төменнен <strong>бір телефон брендін таңдаңыздар</strong></li>
           <li>Жыл сайын жаңа сатып алуларды <strong>кезекпен ашыңыздар</strong></li>
-          <li>Теңгерімді <strong>өздеріңіз есептеңіздер:</strong> (алдыңғы қарыз + жаңа алым) × 1,24</li>
+          <li>Теңгерімді <strong>өздеріңіз есептеңіздер:</strong> алдыңғы қарыз + жаңа алым − сатқаны</li>
           <li>4 жылдан кейін Айгерімнің жағдайын <strong>мұғалімдерге баяндаңыздар</strong></li>
         </ol>
       </div>
@@ -1278,7 +1278,7 @@ function g1_buildYearCard(yr) {
   const buyRows = yd.items.map(i =>
     `<tr><td>🛒 ${i.n}</td>
        <td class="num negative">−${i.p.toLocaleString('kk-KZ')} тг</td>
-       <td><span class="tag tag-red">Несиеге</span></td>
+       <td><span class="tag tag-red">Сатып алды</span></td>
      </tr>`
   ).join('');
 
@@ -1296,7 +1296,7 @@ function g1_buildYearCard(yr) {
       </table>
       <div class="step-box mt12">
         <div class="step-num">Есеп ережесі</div>
-        <div class="step-text">(Алдыңғы қарыз + алғаны − сатқаны) × 1,24 = Жыл соңындағы сумма</div>
+        <div class="step-text">(Алдыңғы қарыз + алғаны − сатқаны) = Жыл соңындағы сумма</div>
       </div>
       <div class="step-box mt12" style="background:#eff6ff;border-color:#3b82f6;">
         <div class="step-num" style="background:#3b82f6;">Есептеп жаз</div>
