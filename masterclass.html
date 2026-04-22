@@ -1263,8 +1263,11 @@ function g1_checkAndNext(yr) {
 }
 
 function g1_proceed(yr) {
+  const correct = g1_yearDebts[yr - 2023];
+  const inp = document.getElementById('g1-inp-' + yr);
+  inp.value = correct;
   document.getElementById('g1-err-' + yr).style.display = 'none';
-  document.getElementById('g1-inp-' + yr).style.borderColor = 'var(--green)';
+  inp.style.borderColor = 'var(--green)';
   if (yr === 2025) { g1_calcFinal(); } else { g1_buildYearCard(yr + 1); }
 }
 
@@ -1385,7 +1388,7 @@ function g1_calcFinal() {
   const defEl = document.getElementById('g1-defense');
   defEl.innerHTML = `
     <div class="defense-box">
-      <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+      <div class="defense-header">Тезис</div>
       <div class="defense-thesis">«Біздің топ — бүгінгі қоғамның айнасы. Біз 4 жыл бойы тек «сатып алу» стратегиясымен жүрдік.»</div>
       <div class="defense-section">
         <div class="defense-label">Топтың қорғау сөзі</div>
@@ -1595,8 +1598,11 @@ function g2_checkAndNext2(yr) {
 }
 
 function g2_proceed(yr) {
+  const correct = g2_yearTotals[yr - 2023];
+  const inp = document.getElementById('g2-inp-' + yr);
+  inp.value = correct;
   document.getElementById('g2-err-' + yr).style.display = 'none';
-  document.getElementById('g2-inp-' + yr).style.borderColor = 'var(--green)';
+  inp.style.borderColor = 'var(--green)';
   if (yr === 2025) { g2_calcFinal2(); } else { g2_buildYearCard2(yr + 1); }
 }
 
@@ -1699,7 +1705,7 @@ function g2_calcFinal2() {
   const g2def = document.getElementById('g2-defense');
   g2def.innerHTML = `
     <div class="defense-box">
-      <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+      <div class="defense-header">Тезис</div>
       <div class="defense-thesis">«Инвестиция — бұл лотерея емес, бұл — талдау. Кейбір компаниялардан ұтылдық, бірақ технологиялар бізді алға шығарды. Риск әрқашан бар.»</div>
       <div class="defense-section">
         <div class="defense-label">Топтың қорғау сөзі</div>
@@ -2166,7 +2172,7 @@ function g3_calcFinal3() {
         <p><strong>Номинал өсім — шын өсім емес.</strong> Инфляция ${(yrs.reduce((s,yr)=>{const d=g3_years_data.find(y=>y.yr===yr);return s+d.inflation;},0)/4).toFixed(1)}% орта есеппен болды. Депозит пайызы инфляциядан жоғары болса ғана ақшаның нақты құны өседі. <strong>Математикалық дағды — дұрыс банк таңдаудың кілті.</strong></p>
       </div>
       <div class="defense-box" style="margin-top:16px;">
-        <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+        <div class="defense-header">Тезис</div>
         <div class="defense-thesis">«Біз ақшаны сақтау мен көбейтудің ең танымал жолын таңдадық. Бірақ бұл жерде пайыздар мен инфляцияны дұрыс есептеу керек екенін түсіндік.»</div>
         <div class="defense-section">
           <div class="defense-label">Топтың қорғау сөзі</div>
@@ -2704,7 +2710,7 @@ function g4_calcFinal4() {
 
       <!-- H) Қорғау блогы -->
       <div class="defense-box" style="margin-top:16px;">
-        <div class="defense-header">🎤 Тақтаға шығып қорғау</div>
+        <div class="defense-header">Тезис</div>
         <div class="defense-thesis">«Біздің топ — бүгінгі мастер-кластың түйіні. Бізде қарыз болды, бірақ біз 50/30/20 ережесін ұстандық. Тәртіп бәрін жеңді.»</div>
         <div class="defense-section">
           <div class="defense-label">Топтың қорғау сөзі</div>
