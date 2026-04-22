@@ -2169,10 +2169,6 @@ function g3_calcFinal3() {
       <div class="result-message mt12">
         🟢 <strong>Қорытынды:</strong> Депозит — қауіпсіз жинақ тәсілі, бірақ инфляциядан жоғары пайыз таңдамасаң, ақшаның нақты құны азаяды. Математикалық дағды — дұрыс банк таңдаудың кілті.
       </div>
-      <div class="lesson-box" style="margin-top:16px;">
-        <h3>🏦 Депозиттің сабағы</h3>
-        <p><strong>Номинал өсім — шын өсім емес.</strong> Инфляция ${(yrs.reduce((s,yr)=>{const d=g3_years_data.find(y=>y.yr===yr);return s+d.inflation;},0)/4).toFixed(1)}% орта есеппен болды. Депозит пайызы инфляциядан жоғары болса ғана ақшаның нақты құны өседі. <strong>Математикалық дағды — дұрыс банк таңдаудың кілті.</strong></p>
-      </div>
       <div class="defense-box" style="margin-top:16px;">
         <div class="defense-header">Тезис</div>
         <div class="defense-thesis">«Біз ақшаны сақтау мен көбейтудің ең танымал жолын таңдадық. Бірақ бұл жерде пайыздар мен инфляцияны дұрыс есептеу керек екенін түсіндік.»</div>
@@ -2702,13 +2698,6 @@ function g4_calcFinal4() {
         <strong>Тәртіп + уақыт = қаржылық тәуелсіздік.</strong>
       </div>
 
-      <!-- G) Сабақ блогы -->
-      <div class="lesson-box">
-        <h3>🎯 50/30/20 стратегиясының сабағы</h3>
-        <p>Бастапқыда <strong>1 000 000 тг қарызда</strong> болса да — тәртіп + уақыт + математика =
-        4 жылда <strong>${finalNet.toLocaleString('kk-KZ')} тг таза байлық.</strong>
-        Қаржылық сауаттылық — болашаққа инвестиция.</p>
-      </div>
 
       <!-- H) Қорғау блогы -->
       <div class="defense-box" style="margin-top:16px;">
