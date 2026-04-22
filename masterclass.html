@@ -493,6 +493,7 @@
   <button class="tab-btn t2"        onclick="showTab('t2',this)">🏦 2-топ: Депозит</button>
   <button class="tab-btn t3"        onclick="showTab('t3',this)">📈 3-топ: Инвесторлар</button>
   <button class="tab-btn t4"        onclick="showTab('t4',this)">🎯 4-топ: Сауатты азамат</button>
+  <button class="tab-btn th"        onclick="showTab('th',this)">📋 Тарих</button>
   <button class="tab-btn ts"        onclick="showTab('ts',this)">📊 Жиынтық</button>
 </nav>
 
@@ -591,6 +592,10 @@
       <tbody></tbody>
     </table>
     <div class="result-message mt12" id="g1-result-msg"></div>
+    <div class="lesson-box" style="margin-top:16px;" id="g1-lesson" style="display:none;">
+      <h3>🧠 Дидро эффектісінің сабағы</h3>
+      <p id="g1-lesson-text">Бір сатып алу тізбекті шығынға алып келеді. Тауардың бағасы емес — <strong>тізбекті ойлау (Дидро эффектісі)</strong> — басты мәселе. Бастапқы 1 000 000 тг 4 жылда қарызға айналды.</p>
+    </div>
   </div>
 
 </div>
@@ -667,6 +672,10 @@
       <tbody></tbody>
     </table>
     <div class="result-message mt12" id="g2-result-msg"></div>
+    <div class="lesson-box" style="margin-top:16px;">
+      <h3>📈 Инвестицияның сабағы</h3>
+      <p><strong>Диверсификация — тәуекелді азайту жолы.</strong> Нашар компанияның шығынын жақсысы жапты. Барлық ақшаны бір жерге салу — ең үлкен қате. 5 компания × 200 000 тг — бірі құласа, қалғандары ұстап тұрады.</p>
+    </div>
   </div>
 
 </div>
@@ -850,6 +859,26 @@
 <!-- ══════════════════════════════════════════
      TAB SUMMARY
 ══════════════════════════════════════════ -->
+<div id="th" class="tab-panel">
+  <div class="card-title" style="font-size:1.1rem;margin-bottom:16px;">📋 Топтардың таңдау тарихы — тақтаға шығу үшін</div>
+
+  <div class="card" id="th-g1">
+    <div style="color:var(--muted);font-style:italic;padding:12px;">⏳ 1-топ нәтижесі күтілуде...</div>
+  </div>
+
+  <div class="card" id="th-g2">
+    <div style="color:var(--muted);font-style:italic;padding:12px;">⏳ 2-топ нәтижесі күтілуде...</div>
+  </div>
+
+  <div class="card" id="th-g3">
+    <div style="color:var(--muted);font-style:italic;padding:12px;">⏳ 3-топ нәтижесі күтілуде...</div>
+  </div>
+
+  <div class="card" id="th-g4">
+    <div style="color:var(--muted);font-style:italic;padding:12px;">⏳ 4-топ нәтижесі күтілуде...</div>
+  </div>
+</div>
+
 <div id="ts" class="tab-panel">
 
   <div class="card">
@@ -968,6 +997,118 @@ function fbApply(group, data) {
   barEl.style.width  = data.barPct + '%';
   barEl.textContent  = data.barText;
   bvEl.textContent   = data.barVal;
+  if (data.history) fbApplyHistory(group, data.history);
+}
+
+function fbApplyHistory(group, h) {
+  const num = group.replace('g', '');
+  const el  = document.getElementById('th-g' + num);
+  if (!el || !h) return;
+  el.innerHTML = buildHistoryHtml(group, h);
+}
+
+function buildHistoryHtml(group, h) {
+  const colors = { g1:'var(--red)', g2:'var(--green)', g3:'var(--purple)', g4:'var(--gold)' };
+  const c = colors[group] || '#333';
+
+  if (group === 'g1') {
+    const rows = h.years.map(function(y) {
+      return '<tr>' +
+        '<td><strong>' + y.yr + '</strong></td>' +
+        '<td style="font-size:0.82rem;">' + y.items + '</td>' +
+        '<td class="num" style="color:var(--green);font-size:0.82rem;">' + (y.sold > 0 ? '+' + y.sold.toLocaleString('kk-KZ') + ' тг' : '—') + '</td>' +
+        '<td class="num negative">−' + y.bought.toLocaleString('kk-KZ') + ' тг</td>' +
+        '<td class="num negative" style="font-weight:700;">−' + y.debt.toLocaleString('kk-KZ') + ' тг</td>' +
+      '</tr>';
+    }).join('');
+    return '<div style="border-left:4px solid ' + c + ';padding-left:12px;margin-bottom:8px;">' +
+      '<div style="font-weight:800;font-size:1rem;margin-bottom:8px;">🛍️ 1-топ: Тұтынушылар — ' + h.emoji + ' ' + h.brand + '</div>' +
+      '<div style="overflow-x:auto;">' +
+      '<table class="year-table" style="min-width:420px;">' +
+      '<thead><tr><th>Жыл</th><th>Сатып алынды</th><th>Сатылды</th><th>Жұмсалды</th><th>Жиынтық қарыз</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table></div>' +
+      '<div style="margin-top:10px;padding:8px 12px;background:#fef2f2;border-radius:8px;font-size:0.88rem;">' +
+      '📌 <strong>Формула:</strong> алдыңғы қарыз + жаңа алым − сатқаны = жыл соңы</div></div>';
+  }
+
+  if (group === 'g3') {
+    const rows = h.companies.map(function(co) {
+      const pctStr = co.pcts.map(function(p) {
+        return '<span style="color:' + (p >= 0 ? '#059669' : 'var(--red)') + ';font-weight:700;">' + (p >= 0 ? '+' : '') + p + '%</span>';
+      }).join(' → ');
+      const diff = co.final - 200000;
+      return '<tr>' +
+        '<td>' + co.catEmoji + ' <strong>' + co.name + '</strong><br><small style="color:var(--muted);">' + co.ticker + '</small></td>' +
+        '<td class="num" style="font-size:0.8rem;">' + pctStr + '</td>' +
+        '<td class="num ' + (co.vals[0] >= 200000 ? '' : 'negative') + '">' + co.vals[0].toLocaleString('kk-KZ') + '</td>' +
+        '<td class="num ' + (co.vals[1] >= 200000 ? '' : 'negative') + '">' + co.vals[1].toLocaleString('kk-KZ') + '</td>' +
+        '<td class="num ' + (co.vals[2] >= 200000 ? '' : 'negative') + '" style="font-weight:700;">' + co.vals[2].toLocaleString('kk-KZ') + ' тг<br>' +
+        '<small style="color:' + (diff >= 0 ? '#059669' : 'var(--red)') + ';">(' + (diff >= 0 ? '+' : '') + diff.toLocaleString('kk-KZ') + ')</small></td>' +
+      '</tr>';
+    }).join('');
+    const totalDiff = h.totalFinal - 1000000;
+    return '<div style="border-left:4px solid ' + c + ';padding-left:12px;margin-bottom:8px;">' +
+      '<div style="font-weight:800;font-size:1rem;margin-bottom:8px;">📈 3-топ: Инвесторлар — Асқар (5 × 200 000 тг)</div>' +
+      '<div style="overflow-x:auto;">' +
+      '<table class="year-table" style="min-width:500px;">' +
+      '<thead><tr><th>Компания</th><th>% өзгеріс</th><th>2023 соңы</th><th>2024 соңы</th><th>2025 соңы</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+      '<tfoot><tr><td colspan="4" style="font-weight:700;text-align:right;">Жиынтық:</td>' +
+      '<td class="num" style="font-weight:800;color:' + (totalDiff >= 0 ? '#059669' : 'var(--red)') + ';">' +
+      h.totalFinal.toLocaleString('kk-KZ') + ' тг<br><small>(' + (totalDiff >= 0 ? '+' : '') + totalDiff.toLocaleString('kk-KZ') + ')</small></td></tr></tfoot>' +
+      '</table></div>' +
+      '<div style="margin-top:10px;padding:8px 12px;background:#f5f3ff;border-radius:8px;font-size:0.88rem;">' +
+      '📌 <strong>Формула:</strong> бастапқы сома × (1 + %) = жыл соңы. Әр компания бойынша жеке есептеледі.</div></div>';
+  }
+
+  if (group === 'g2') {
+    const rows = h.years.map(function(y) {
+      return '<tr>' +
+        '<td><strong>' + y.yr + '</strong></td>' +
+        '<td>' + y.bank + '<br><small style="color:var(--muted);">' + y.rate + '%</small></td>' +
+        '<td class="num">' + y.nom.toLocaleString('kk-KZ') + ' тг</td>' +
+        '<td style="color:var(--muted);font-size:0.85rem;">' + y.inflation + '%</td>' +
+        '<td class="num" style="color:' + (y.real > (y.nom / (1 + y.rate/100)) ? '#059669' : 'var(--muted)') + ';">' + y.real.toLocaleString('kk-KZ') + ' тг</td>' +
+      '</tr>';
+    }).join('');
+    return '<div style="border-left:4px solid ' + c + ';padding-left:12px;margin-bottom:8px;">' +
+      '<div style="font-weight:800;font-size:1rem;margin-bottom:8px;">🏦 2-топ: Депозит — Гүлнәр (бастапқы: 1 000 000 тг)</div>' +
+      '<div style="overflow-x:auto;">' +
+      '<table class="year-table" style="min-width:420px;">' +
+      '<thead><tr><th>Жыл</th><th>Банк / Депозит</th><th>Жыл соңы (номинал)</th><th>Инфляция</th><th>Нақты мән</th></tr></thead>' +
+      '<tbody><tr><td>Бастапқы</td><td>—</td><td>1 000 000 тг</td><td>—</td><td>1 000 000 тг</td></tr>' + rows + '</tbody>' +
+      '</table></div>' +
+      '<div style="margin-top:10px;padding:8px 12px;background:#ecfdf5;border-radius:8px;font-size:0.88rem;">' +
+      '📌 <strong>Формула:</strong> алдыңғы сома × (1 + пайыз%) = жыл соңы номинал. Нақты мән = номинал ÷ (1 + инфляция%)</div></div>';
+  }
+
+  if (group === 'g4') {
+    const rows = h.years.map(function(y) {
+      const net = y.dep + y.inv - y.loan;
+      const pSign = y.invPct >= 0 ? '+' : '';
+      return '<tr>' +
+        '<td><strong>' + y.yr + '</strong></td>' +
+        '<td style="color:' + (y.loan === 0 ? '#059669' : 'var(--red)') + ';">' + (y.loan === 0 ? '✓ Өтелді' : '−' + y.loan.toLocaleString('kk-KZ')) + '</td>' +
+        '<td class="num">' + y.dep.toLocaleString('kk-KZ') + '</td>' +
+        '<td class="num" style="color:' + (y.invPct < 0 ? 'var(--red)' : '#059669') + ';">' + y.inv.toLocaleString('kk-KZ') + ' <small>(' + pSign + y.invPct + '%)</small></td>' +
+        '<td class="num" style="font-weight:700;color:' + (net >= 0 ? '#059669' : 'var(--red)') + ';">' + (net >= 0 ? '+' : '') + net.toLocaleString('kk-KZ') + '</td>' +
+      '</tr>';
+    }).join('');
+    return '<div style="border-left:4px solid ' + c + ';padding-left:12px;margin-bottom:8px;">' +
+      '<div style="font-weight:800;font-size:1rem;margin-bottom:8px;">🎯 4-топ: Сауатты азамат — Нұрлан (250 000 тг/ай)</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">' +
+      '<span style="padding:4px 10px;border-radius:12px;font-size:0.8rem;font-weight:700;background:#eff6ff;color:#3b82f6;">🏦 ' + h.dep + ' (' + h.depRate + '%)</span>' +
+      '<span style="padding:4px 10px;border-radius:12px;font-size:0.8rem;font-weight:700;background:#fffbeb;color:#92400e;">' + h.invEmoji + ' ' + h.inv + '</span></div>' +
+      '<div style="overflow-x:auto;">' +
+      '<table class="year-table" style="min-width:420px;">' +
+      '<thead><tr><th>Жыл</th><th>Несие қалдығы</th><th>Депозит</th><th>Инвестиция</th><th>Таза байлық</th></tr></thead>' +
+      '<tbody><tr><td>Бастапқы</td><td style="color:var(--red);">−1 000 000</td><td>0</td><td>0</td><td style="color:var(--red);font-weight:700;">−1 000 000</td></tr>' + rows + '</tbody>' +
+      '</table></div>' +
+      '<div style="margin-top:10px;padding:8px 12px;background:#fffbeb;border-radius:8px;font-size:0.88rem;">' +
+      '📌 <strong>Стратегия:</strong> 50% — міндетті шығын · 30% — несие өтеу + тұрмыс · 20% — жинақ (депозит + инвестиция)</div></div>';
+  }
+
+  return '<div style="color:var(--muted);padding:12px;">Деректер жоқ</div>';
 }
 
 function fbListen() {
@@ -1205,6 +1346,10 @@ function g1_calcFinal() {
   document.getElementById('g1-result-msg').innerHTML =
     `🔴 <strong>Қорытынды (${b.emoji} ${b.name} жолы):</strong> Айгерім ескі заттарын сатып, жаңасын алды — бірақ Дидро эффектісі тоқтамады. Сатқанымен де, үнемі жаңа нәрсе алу арқылы 2026 жылы қолданылған жиынтық сумма — <strong>−${finalDebt.toLocaleString('kk-KZ')} тг</strong>. Ал бірнеше жыл бұрын Айгерімде 1 000 000 тг бар еді.`;
 
+  document.getElementById('g1-lesson-text').innerHTML =
+    b.emoji + ' <strong>' + b.name + ' жолын таңдай отырып,</strong> бастапқы 1 000 000 тг 4 жылда <strong>−' + finalDebt.toLocaleString('kk-KZ') + ' тг қарызға</strong> айналды. ' +
+    'Тауардың бағасы емес — <strong>тізбекті ойлау (Дидро эффектісі)</strong> — басты мәселе. Бір сатып алу келесіні туындатады.';
+
   const box = document.getElementById('g1-result');
   box.style.display = 'block';
   box.scrollIntoView({ behavior:'smooth', block:'nearest' });
@@ -1217,7 +1362,9 @@ function g1_calcFinal() {
   const pct = Math.min(100, Math.round(finalDebt / 70000));
   document.getElementById('ts-g1-bar').style.width = pct + '%';
   document.getElementById('ts-g1-bar-val').textContent = fmtM(finalDebt);
-  fbWrite('g1', { amount: fmtM(finalDebt), label: b.emoji+' '+b.name+' жолы · Қарызда қалды', barPct: pct, barText: fmtM(finalDebt), barVal: fmtM(finalDebt) });
+  fbWrite('g1', { amount: fmtM(finalDebt), label: b.emoji+' '+b.name+' жолы · Қарызда қалды', barPct: pct, barText: fmtM(finalDebt), barVal: fmtM(finalDebt),
+    history: { brand: b.name, emoji: b.emoji, years: rows.map(function(r){ return { yr:r.yr, items:r.items.map(function(i){return i.n;}).join(' + '), bought:r.bought, sold:r.sold, debt:r.debt }; }) }
+  });
 }
 
 /* ══ GROUP 2 ══ */
@@ -1508,7 +1655,9 @@ function g2_calcFinal2() {
   document.getElementById('ts-g3-bar').style.width    = g2pct + '%';
   document.getElementById('ts-g3-bar').textContent    = totalFinal.toLocaleString('kk-KZ');
   document.getElementById('ts-g3-bar-val').textContent = totalFinal.toLocaleString('kk-KZ') + ' тг';
-  fbWrite('g3', { amount: totalFinal.toLocaleString('kk-KZ')+' тг', label: isProfit ? 'Байлық өсті (+'+pct+'%)' : 'Шығын ('+pct+'%)', barPct: g2pct, barText: totalFinal.toLocaleString('kk-KZ'), barVal: totalFinal.toLocaleString('kk-KZ')+' тг' });
+  fbWrite('g3', { amount: totalFinal.toLocaleString('kk-KZ')+' тг', label: isProfit ? 'Байлық өсті (+'+pct+'%)' : 'Шығын ('+pct+'%)', barPct: g2pct, barText: totalFinal.toLocaleString('kk-KZ'), barVal: totalFinal.toLocaleString('kk-KZ')+' тг',
+    history: { totalFinal: totalFinal, companies: rows.map(function(r){ return { name:r.comp.name, ticker:r.comp.ticker, catEmoji:r.cat.emoji, pcts:r.comp.years.map(function(y){return y.pct;}), vals:r.vals, final:r.final }; }) }
+  });
 }
 
 /* ══ GROUP 3 ══ */
@@ -1939,6 +2088,10 @@ function g3_calcFinal3() {
       <div class="result-message mt12">
         🟢 <strong>Қорытынды:</strong> Депозит — қауіпсіз жинақ тәсілі, бірақ инфляциядан жоғары пайыз таңдамасаң, ақшаның нақты құны азаяды. Математикалық дағды — дұрыс банк таңдаудың кілті.
       </div>
+      <div class="lesson-box" style="margin-top:16px;">
+        <h3>🏦 Депозиттің сабағы</h3>
+        <p><strong>Номинал өсім — шын өсім емес.</strong> Инфляция ${(yrs.reduce((s,yr)=>{const d=g3_years_data.find(y=>y.yr===yr);return s+d.inflation;},0)/4).toFixed(1)}% орта есеппен болды. Депозит пайызы инфляциядан жоғары болса ғана ақшаның нақты құны өседі. <strong>Математикалық дағды — дұрыс банк таңдаудың кілті.</strong></p>
+      </div>
     </div>
   `;
   resultEl.style.display = 'block';
@@ -1953,7 +2106,9 @@ function g3_calcFinal3() {
   document.getElementById('ts-g2-bar').style.width    = g3pct + '%';
   document.getElementById('ts-g2-bar').textContent    = finalNom.toLocaleString('kk-KZ');
   document.getElementById('ts-g2-bar-val').textContent = finalNom.toLocaleString('kk-KZ') + ' тг';
-  fbWrite('g2', { amount: finalNom.toLocaleString('kk-KZ')+' тг', label: g3LabelText, barPct: g3pct, barText: finalNom.toLocaleString('kk-KZ'), barVal: finalNom.toLocaleString('kk-KZ')+' тг' });
+  fbWrite('g2', { amount: finalNom.toLocaleString('kk-KZ')+' тг', label: g3LabelText, barPct: g3pct, barText: finalNom.toLocaleString('kk-KZ'), barVal: finalNom.toLocaleString('kk-KZ')+' тг',
+    history: { years: [2022,2023,2024,2025].map(function(yr){ var yd=g3_years_data.find(function(y){return y.yr===yr;}); var dp=yd.deposits.find(function(d){return d.id===g3_chosen_dep[yr];}); var nom=g3_nominals[yr]; var real=Math.round(nom/(1+yd.inflation/100)); return {yr:yr,bank:dp.bank,rate:dp.rate,nom:nom,real:real,inflation:yd.inflation}; }) }
+  });
 }
 
 /* ══ GROUP 4 ══ */
@@ -2473,7 +2628,9 @@ function g4_calcFinal4() {
   document.getElementById('ts-g4-bar').style.width    = g4pct + '%';
   document.getElementById('ts-g4-bar').textContent    = finalNet.toLocaleString('kk-KZ');
   document.getElementById('ts-g4-bar-val').textContent = finalNet.toLocaleString('kk-KZ') + ' тг';
-  fbWrite('g4', { amount: finalNet.toLocaleString('kk-KZ')+' тг', label: g4LabelText, barPct: g4pct, barText: finalNet.toLocaleString('kk-KZ'), barVal: finalNet.toLocaleString('kk-KZ')+' тг' });
+  fbWrite('g4', { amount: finalNet.toLocaleString('kk-KZ')+' тг', label: g4LabelText, barPct: g4pct, barText: finalNet.toLocaleString('kk-KZ'), barVal: finalNet.toLocaleString('kk-KZ')+' тг',
+    history: { dep:dep_o.name, depRate:dep_o.rate, inv:inv_o.name, invEmoji:inv_o.emoji, years:g4_years.map(function(yr,i){ return {yr:yr,loan:g4_loan_bal[yr]||0,dep:g4_dep_bal[yr]||0,inv:g4_inv_bal[yr]||0,invPct:inv_o.rates[i]}; }) }
+  });
 }
 
 // Init
