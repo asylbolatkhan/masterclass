@@ -1385,8 +1385,13 @@ function g1_calcFinal() {
     b.emoji + ' <strong>' + b.name + ' жолын таңдай отырып,</strong> бастапқы 1 000 000 тг 4 жылда <strong>−' + finalDebt.toLocaleString('kk-KZ') + ' тг қарызға</strong> айналды. ' +
     'Тауардың бағасы емес — <strong>тізбекті ойлау (Дидро эффектісі)</strong> — басты мәселе. Бір сатып алу келесіні туындатады.';
 
+  const box = document.getElementById('g1-result');
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+
   const defEl = document.getElementById('g1-defense');
-  defEl.innerHTML = `
+  if (defEl) {
+    defEl.innerHTML = `
     <div class="defense-box">
       <div class="defense-header">Тезис</div>
       <div class="defense-thesis">«Біздің топ — бүгінгі қоғамның айнасы. Біз 4 жыл бойы тек «сатып алу» стратегиясымен жүрдік.»</div>
@@ -1400,11 +1405,8 @@ function g1_calcFinal() {
         <p>Бұл тапсырма арқылы балалар «қалау» (хочу) мен «қажеттіліктің» (надо) аражігін ажыратуды үйренеді. Тұтынушылық несие мен Дидро эффектісі адамды қалай қаржылық тығырыққа тірейтінін оқушылар өз көзімен көреді. Біздің нәтижеміз — қалтадағы нөл және қарыз. Бұл — оқушыға «егер сенің жоспарың болмаса, сен біреудің маркетингтік жоспарының бір бөлігісің» дегенді ұғындырудың ең тиімді жолы.</p>
       </div>
     </div>`;
-  defEl.style.display = 'block';
-
-  const box = document.getElementById('g1-result');
-  box.style.display = 'block';
-  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    defEl.style.display = 'block';
+  }
 
   // Update summary tab
   const fmtM = (n) => '−' + (n/1000000).toFixed(1) + ' млн тг';
@@ -2142,7 +2144,7 @@ function g3_calcFinal3() {
   const isRealPos = realGain >= 0;
 
   resultEl.innerHTML = `
-    <div class="card result-box ${isRealPos ? 'ok' : 'bad'}">
+    <div class="card result-box ${isRealPos ? 'ok' : 'bad'}" style="display:block;">
       <div class="result-headline">${isRealPos ? '+' : ''}${realGain.toLocaleString('kk-KZ')} тг нақты өсім</div>
       <div class="result-label">4 жыл бойы депозит сақтаудың нақты нәтижесі (инфляция есебімен)</div>
       <table class="year-table" style="margin-top:16px;">
@@ -2616,7 +2618,7 @@ function g4_calcFinal4() {
   `).join('');
 
   const finalHtml = `
-    <div class="card result-box ${isPos ? 'ok' : 'bad'}">
+    <div class="card result-box ${isPos ? 'ok' : 'bad'}" style="display:block;">
       <div class="result-headline">🎯 ${finalNet.toLocaleString('kk-KZ')} тг жалпы табыс</div>
       <div class="result-label">4 жыл соңы · несие өтелді · жинақ жиналды</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px;">
