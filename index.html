@@ -486,6 +486,7 @@
 <div class="site-header">
   <h1>💰 Қаржылық сауаттылық</h1>
   <p>Мастер-класс · 4 топ · 4 жыл · 1 000 000 теңге</p>
+  <button onclick="fbResetAll()" style="margin-top:10px;padding:6px 16px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:8px;font-size:0.78rem;cursor:pointer;">🔄 Сессияны тазалау</button>
 </div>
 
 <nav class="tabs-nav" role="tablist">
@@ -1109,6 +1110,14 @@ function buildHistoryHtml(group, h) {
   }
 
   return '<div style="color:var(--muted);padding:12px;">Деректер жоқ</div>';
+}
+
+function fbResetAll() {
+  if (!confirm('Барлық топтардың деректерін өшіресіз бе? Топтардың ноуттарында бет жаңаруы керек.')) return;
+  ['g1','g2','g3','g4'].forEach(function(g) {
+    fetch(FB_URL + '/' + g + '.json', { method: 'DELETE' }).catch(function(){});
+  });
+  setTimeout(function() { location.reload(); }, 800);
 }
 
 function fbListen() {
@@ -2601,11 +2610,19 @@ function g4_calcFinal4() {
       </div>
 
       <!-- F) Қорытынды сөйлем -->
-      <div style="padding:14px 16px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:10px;border-left:4px solid var(--gold);font-size:0.88rem;">
+      <div style="padding:14px 16px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:10px;border-left:4px solid var(--gold);font-size:0.88rem;margin-bottom:16px;">
         🟡 <strong>Негізгі сабақ:</strong> Бастапқыда <span style="color:#dc2626;font-weight:700;">1 000 000 тг қарызда</span> болса да —
         дұрыс стратегия + математикалық тәртіп = 4 жылда
         <span style="color:#059669;font-weight:700;">${finalNet.toLocaleString('kk-KZ')} тг таза жинақ.</span>
         <strong>Тәртіп + уақыт = қаржылық тәуелсіздік.</strong>
+      </div>
+
+      <!-- G) Сабақ блогы -->
+      <div class="lesson-box">
+        <h3>🎯 50/30/20 стратегиясының сабағы</h3>
+        <p>Бастапқыда <strong>1 000 000 тг қарызда</strong> болса да — тәртіп + уақыт + математика =
+        4 жылда <strong>${finalNet.toLocaleString('kk-KZ')} тг таза байлық.</strong>
+        Қаржылық сауаттылық — болашаққа инвестиция.</p>
       </div>
     </div>`;
   // Батырманы нәтижемен алмастыру
